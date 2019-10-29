@@ -1,5 +1,10 @@
+#Ajoute nous meme
+.vscode/*
+
+#Ajoute par un git ignore automatique pour python
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*.swp
 *.py[cod]
 *$py.class
 
