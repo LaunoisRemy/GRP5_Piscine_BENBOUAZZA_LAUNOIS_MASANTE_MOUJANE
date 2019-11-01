@@ -5,8 +5,7 @@ from django.db import models
 class Classe(models.Model):
     lib_Classe=models.CharField(max_length=10)
     annee_Promo=models.CharField(max_length=4)
-    def __unicode__(self):
-        return self.lib_Classe    
+  
     def __str__(self):
         return self.lib_Classe
 
@@ -15,8 +14,14 @@ class Eleve(models.Model):
     nom=models.CharField(max_length=50)
     prenom=models.CharField(max_length=50)
     classe=models.ForeignKey('Classe',default=None, on_delete=models.CASCADE)
-    def __unicode__(self):
-        return self.nom + " " + self.prenom
-        
+
     def __str__(self):
         return self.nom + " " + self.prenom
+
+class TOEIC(models.Model):
+    LibelleTOEIC=models.CharField(max_length=20)
+
+class Question(models.Model):
+    id_Question=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic + (faut-il représenter la relativité ?)
+    #id_Souspartie=models.ForeignKey('sous_Partie',default=None, on_delete=models.CASCADE) #Une réponse est comparée à une réponse d'une sous partie
+    reponse_Juste=models.CharField(max_length=1) #À revoir faire quelque chose de plus propre (énumeration ?)
