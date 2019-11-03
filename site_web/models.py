@@ -29,12 +29,13 @@ class TOEIC(models.Model):
     LibelleTOEIC=models.CharField(max_length=20)
 
 class Question(models.Model):
-    id_Question=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic + (faut-il représenter la relativité ?)
+    id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic + (faut-il représenter la relativité ?)
+    
     #id_Souspartie=models.ForeignKey('sous_Partie',default=None, on_delete=models.CASCADE) #Une réponse est comparée à une réponse d'une sous partie
     reponse_Juste=models.CharField(max_length=1) #À revoir faire quelque chose de plus propre (énumeration ?)
 
     def __str__(self):
-        return self.id_Question + ":" + self.reponse_Juste
+        return str(self.id )+ ":" + self.reponse_Juste
 
 class Date(models.Model):
     date=models.DateField()
