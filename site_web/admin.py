@@ -9,7 +9,6 @@ class EleveAdmin(admin.ModelAdmin):
     fieldsets=[
         ("Eleve",{"fields" : ["nom","prenom","num_INE"]}),
         ("Appartient",{"fields" : ["classe","groupe"]})
-
     ]
 admin.site.register(Eleve,EleveAdmin)
 admin.site.register(Classe)
@@ -17,3 +16,4 @@ admin.site.register(Groupe)
 admin.site.register(Question)
 admin.site.register(TOEIC)
 admin.site.register(Sous_partie)
+
