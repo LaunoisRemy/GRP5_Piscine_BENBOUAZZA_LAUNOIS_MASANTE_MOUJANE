@@ -25,6 +25,10 @@ def liste_Eleve(request):
     return liste(request,"Eleves",Eleve.objects.all())  
 def liste_Classe(request):
     return liste(request,"Classes",Classe.objects.all())  
+def liste_TOEIC(request):
+    return liste(request,"libelleTOEIC",TOEIC.objects.all()) 
+def liste_groupe(request):
+    return lsite(request,"Groupes",Groupe.objects.all())
 
 def session(request):    
     context ={

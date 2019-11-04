@@ -32,9 +32,15 @@ class TOEIC(models.Model):
         return self.lib_TOEIC
 
 class Question(models.Model):
+<<<<<<< HEAD
     id_Question=models.CharField(max_length=1 )
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic 
     id_SousPartie=models.ForeignKey('Sous_partie',default=None, on_delete=models.CASCADE) 
+=======
+    id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic + (faut-il représenter la relativité ?)
+    
+    #id_Souspartie=models.ForeignKey('sous_Partie',default=None, on_delete=models.CASCADE) #Une réponse est comparée à une réponse d'une sous partie
+>>>>>>> 2071f5ae17ed34bc3c01fc0c3798bd0b6251d34a
     reponse_Juste=models.CharField(max_length=1) #À revoir faire quelque chose de plus propre (énumeration ?)
 
     class Meta:
@@ -54,7 +60,11 @@ class Reponse(models.Model):
     id_SousPartie=models.ForeignKey('Sous_partie',default=None, on_delete=models.CASCADE) 
     score=models.CharField(max_length=2) 
     def __str__(self):
+<<<<<<< HEAD
         return "TOEIC : "+self.id_TOEIC +"Partie : " + self.id_SousPartie + " score de :" + self.scoreqX
+=======
+        return str(self.id )+ ":" + self.reponse_Juste
+>>>>>>> 2071f5ae17ed34bc3c01fc0c3798bd0b6251d34a
 
 class Date(models.Model):#surment inutile
     date=models.DateField()
