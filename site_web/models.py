@@ -32,7 +32,6 @@ class TOEIC(models.Model):
         return self.lib_TOEIC
 
 class Question(models.Model):
-<<<<<<< HEAD
     id_Question=models.CharField(max_length=1 )
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic 
     id_SousPartie=models.ForeignKey('Sous_partie',default=None, on_delete=models.CASCADE) 
