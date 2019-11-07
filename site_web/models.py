@@ -4,7 +4,7 @@ from django.db import models
 
 class Classe(models.Model):
     lib_Classe=models.CharField(max_length=10)
-    annee_Promo=models.CharField(max_length=4)
+    annee_Promo=models.CharField(max_length=9)
   
     def __str__(self):
         return self.lib_Classe
@@ -17,7 +17,6 @@ class Groupe(models.Model):
 
         
 class Eleve(models.Model):
-    num_INE=models.CharField(max_length=11,primary_key=True )
     nom=models.CharField(max_length=50)
     prenom=models.CharField(max_length=50)
     classe=models.ForeignKey('Classe',default=None, on_delete=models.CASCADE) #Un élève appartient forcément à une classe
@@ -28,11 +27,12 @@ class Eleve(models.Model):
 
 class TOEIC(models.Model):
     lib_TOEIC=models.CharField(max_length=20)
+    #date=models.DateField()
     def __str__(self):
         return self.lib_TOEIC
 
 class Question(models.Model):
-    id_Question=models.CharField(max_length=1 )
+    id_Question=models.CharField(max_length=3 )
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic 
     id_SousPartie=models.ForeignKey('Sous_partie',default=None, on_delete=models.CASCADE) 
     reponse_Juste=models.CharField(max_length=1) #À revoir faire quelque chose de plus propre (énumeration ?)
@@ -48,18 +48,15 @@ class Sous_partie(models.Model):
     def __str__(self):
         return "Partie numéro : "+ self.lib_Partie +" " + self.type_Partie
 
-class Reponse(models.Model): 
-    num_Ine=models.ForeignKey('Eleve',default=None, on_delete=models.CASCADE)  
+class ScoreParPartie(models.Model): 
+    id_Eleve=models.ForeignKey('Eleve',default=None, on_delete=models.CASCADE)  
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE)  
     id_SousPartie=models.ForeignKey('Sous_partie',default=None, on_delete=models.CASCADE) 
-    score=models.CharField(max_length=2) 
+    score=models.IntegerField() 
+    class Meta:
+        unique_together = (("id_SousPartie","id_TOEIC","id_Eleve"),)
     def __str__(self):
 
-        return "TOEIC : "+self.id_TOEIC +"Partie : " + self.id_SousPartie + " score de :" + self.score
+        return "TOEIC : "+ str(self.id_TOEIC) + "Partie : " + str(self.id_SousPartie) + " score de :" + str(self.score)
+        #Fonction double cle primaire
 
-
-class Date(models.Model):#surment inutile
-    date=models.DateField()
-
-    def __str__(self):
-        return self.date

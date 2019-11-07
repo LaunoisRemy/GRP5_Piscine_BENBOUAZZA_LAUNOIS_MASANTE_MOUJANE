@@ -20,5 +20,5 @@ from site_web import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('site/', include("site_web.urls")),
+    path('', include("site_web.urls")),
 ]
