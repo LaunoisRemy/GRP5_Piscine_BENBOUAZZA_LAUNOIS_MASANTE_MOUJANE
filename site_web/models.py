@@ -57,6 +57,7 @@ class ScoreParPartie(models.Model):
         unique_together = (("id_SousPartie","id_TOEIC","id_Eleve"),)
     def __str__(self):
 
-        return "TOEIC : "+ str(self.id_TOEIC) + "Partie : " + str(self.id_SousPartie) + " score de :" + str(self.score)
+        return "TOEIC : "+ str(self.id_TOEIC) + "Partie : " + str(self.id_SousPartie) + " score de :" + str(self.score) + " Pour l'élève " + str(self.id_Eleve)
         #Fonction double cle primaire
 
+    
