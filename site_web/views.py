@@ -14,6 +14,12 @@ def home(request):
         }
     return render(request,"index.html",context)
 
+def repondTOEIC(request):
+    context ={
+        "titre":"ReponseToeic"
+    }
+    return render(request,"toeic.html",context)
+
 
 def liste(request,nom,querryset):  
     context ={
