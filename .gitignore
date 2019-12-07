@@ -1,6 +1,5 @@
 #Ajoute nous meme
 .vscode/*
-requirements.txt
 
 #Ajoute par un git ignore automatique pour python
 # Byte-compiled / optimized / DLL files
