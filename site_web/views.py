@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
+from django.db.models import Sum
 # Create your views here.
 
 def home(request):
@@ -37,8 +38,19 @@ def session(request):
     return render(request,"index.html",context)
 
 def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pris en paramètre un id_eleve et affiche les résultats aux toeic de l'élève concerné
-    score = ScoreParPartie.objects.filter(id_Eleve=id_eleve)
-    return liste(request,"Derniers résultats :",score)
+
+    #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_SousPartie__type_Partie').annotate('id_TOEIC').annotate(Sum('score'))
+
+    ### Ici scoretot est le tableau, des des scores par parties et par toeic de l'élève qui a pour id id_eleve
+    #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie','score')
+
+    ### scoretot recupère ls notes par toeic et par partir de l'élève qui a pour id id_eleve
+    scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(score_type=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score_type')
+
+    #.values('lib_Partie').annotate(Sum('score')
+    return liste(request,"Derniers résultats :",scoretot)
+
+    #print(scoretot)
     
     #sum = 0
     #for j in score:
