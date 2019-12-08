@@ -8,4 +8,4 @@ class qcm(forms.Form):
                ('d','d'),)
     picked = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect())
 
-qcmFormSet = formset_factory(qcm, extra=100)
+qcmFormSet = formset_factory(qcm, extra=4) #Création d'un TOEIC de 4 questions

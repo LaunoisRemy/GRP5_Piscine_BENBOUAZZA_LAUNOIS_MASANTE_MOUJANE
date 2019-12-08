@@ -24,16 +24,25 @@ def repondTOEIC(request):
 """
 def repondTOEIC(request):
     template_name ='toeic.html' #Nom de la page
-    liste=[]
     if request.method == 'GET': #Pour récupérer la page
         formset = qcmFormSet(request.GET or None)
     elif request.method == 'POST':
+        liste=[]
         formset = qcmFormSet(request.POST)
         if formset.is_valid():#Action de sécurité
             for form in formset: #On récupère chacune des réponses 
                 picked  = form.cleaned_data.get('picked')
                 liste.append(picked) #On met chacune des réponses dans une liste
-    print(liste)
+        print(liste)
+    
+        reponse=['a','b','c','d']
+        score=0
+        i=0
+        while i<len(reponse)-1:
+            if liste[i]==reponse[i]:
+                score+=1
+            i+=1
+        print(score)
     return render(request, template_name, {'formset':formset })
 
 def liste(request,nom,querryset):  
