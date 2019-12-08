@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
-from .forms import qcm
+from .forms import qcm, qcmFormSet
 
 
 
@@ -23,15 +23,16 @@ def repondTOEIC(request):
     return render(request,"toeic.html",context)
 """
 def repondTOEIC(request):
-    if request.method == 'POST':
-        form = qcm(request.POST)
-        if form.is_valid():
-            picked  = form.cleaned_data.get('picked')
-            print(picked)
-    else:
-        form = qcm
-
-    return render(request,'toeic.html', {'form':form })
+    template_name ='toeic.html'
+    if request.method == 'GET':
+        formset = qcmFormSet(request.GET or None)
+    elif request.method == 'POST':
+        formset = qcmFormSet(request.POST)
+        if formset.is_valid():
+            for form in formset: 
+                picked  = form.cleaned_data.get('picked')
+                print(picked)
+    return render(request, template_name, {'formset':formset })
 
 def liste(request,nom,querryset):  
     context ={

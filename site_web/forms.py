@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import formset_factory
 
 class qcm(forms.Form):
     CHOICES = (('a','a'),
@@ -7,4 +8,4 @@ class qcm(forms.Form):
                ('d','d'),)
     picked = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect())
 
-
+qcmFormSet = formset_factory(qcm, extra=100)
