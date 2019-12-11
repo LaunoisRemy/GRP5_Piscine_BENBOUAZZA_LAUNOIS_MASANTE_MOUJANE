@@ -52,13 +52,19 @@ def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pri
     
 
     ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
-    scoretot = ScoreParPartie.objects.filter(
+    scoretot = ScoreParPartie.objects.filter( # Query set
         id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
         score=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score')
 
+
+    listTest = list(scoretot) # Transformation de la query set en list
+    for i in listTest : 
+        i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
+        
+
     #scoretot = scoretot.annotate(note=NOTE_L(Cast('score',FloatField()))
     #.values('lib_Partie').annotate(Sum('score')
-    return liste(request,"Derniers résultats :",scoretot)
+    return liste(request,"Derniers résultats :",listTest)
 
     
     #print(scoretot)
