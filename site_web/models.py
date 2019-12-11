@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.db.models import Func
+#from site_web.fonctions_TOEIC import NOTE_L
 # Create your models here.
 
 class Classe(models.Model):
@@ -48,6 +49,9 @@ class Sous_partie(models.Model):
     def __str__(self):
         return "Partie numéro : "+ self.lib_Partie +" " + self.type_Partie
 
+#class note_L(Func):
+ #   function = 'EXP'
+
 class ScoreParPartie(models.Model): 
     id_Eleve=models.ForeignKey('Eleve',default=None, on_delete=models.CASCADE)  
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE)  
@@ -60,4 +64,8 @@ class ScoreParPartie(models.Model):
         return "TOEIC : "+ str(self.id_TOEIC) + "Partie : " + str(self.id_SousPartie) + " score de :" + str(self.score) + " Pour l'élève " + str(self.id_Eleve)
         #Fonction double cle primaire
 
-    
+    def note_L(self):
+            if self.score > 60:
+                  return 495
+            return 0
+

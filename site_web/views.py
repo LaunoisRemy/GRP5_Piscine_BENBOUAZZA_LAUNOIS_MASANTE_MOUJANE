@@ -1,7 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import *
-from django.db.models import Sum
+from django.db.models import Sum,Avg,FloatField
+from django.db.models.functions import Exp
+from .fonctions_TOEIC import NOTE_L
+from django.db.models.functions import Cast
+
+
 # Create your views here.
 
 def home(request):
@@ -44,18 +49,23 @@ def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pri
     ### Ici scoretot est le tableau, des des scores par parties et par toeic de l'élève qui a pour id id_eleve
     #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie','score')
 
-    ### scoretot recupère ls notes par toeic et par partir de l'élève qui a pour id id_eleve
-    scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(score_type=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score_type')
+    
 
+    ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
+    scoretot = ScoreParPartie.objects.filter(
+        id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
+        score=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score')
+
+    #scoretot = scoretot.annotate(note=NOTE_L(Cast('score',FloatField()))
     #.values('lib_Partie').annotate(Sum('score')
     return liste(request,"Derniers résultats :",scoretot)
 
-    #print(scoretot)
     
-    #sum = 0
-    #for j in score:
-    #    sum = sum + j.score 
-    #return HttpResponse(sum)
+    #print(scoretot)
 
-    ### La partie en commentaire était une tentative pour récupérer la somme des points par parties mais 
-    ### Il est surement plus simple de faire des requêtes sur la base de donnée
+    ### C'est ici que le professeur peut voir les statistiques sur les résultats de toeic
+def espace_professeur(request):
+    scoretot=ScoreParPartie.objects.values('id_TOEIC','id_SousPartie__type_Partie').annotate(
+        score_type=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
+    return liste(request,"Voici tout les résultats :",scoretot)
+    
