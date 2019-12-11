@@ -68,4 +68,3 @@ class ScoreParPartie(models.Model):
             if self.score > 60:
                   return 495
             return 0
-
