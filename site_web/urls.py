@@ -6,6 +6,7 @@ urlpatterns = [
     path('session', views.session),
     path('eleve/liste', views.liste_Eleve),
     path('classe/liste', views.liste_Classe),
-    path('repondTOEIC',views.repondTOEIC),
+    #path('repondTOEIC',views.repondTOEIC),
+    path('repondTOEIC/<int:id_Toeic>',views.repondTOEIC),
 
 ]
