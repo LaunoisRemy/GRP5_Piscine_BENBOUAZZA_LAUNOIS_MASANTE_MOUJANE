@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, Http404
 from .models import *
 from .forms import qcm, qcmFormSet
 
@@ -33,16 +33,19 @@ def comparaisonReponse(bonneReponses,userReponses):
         score=0
         i=0
         while i<len(bonneReponses):
-            if userReponses[i].lower()==bonneReponses[i].lower():
-                score+=1
+            if(userReponses[i] is not None):
+                if userReponses[i].lower()==bonneReponses[i].lower():
+                    score+=1
             i+=1
         return(score)
 """
 Fonction qui permet de réaliser la vue lors d'un passage de TOEIC
 """
 def repondTOEIC(request,id_Toeic):
-    
     listeBonneReponse = getBonneReponse(id_Toeic)
+    print(type(listeBonneReponse))
+    if len(listeBonneReponse) == 0 :
+        raise Http404
 
     template_name ='toeic.html' #Nom de la page
     if request.method == 'GET': #Pour récupérer la page
@@ -52,16 +55,17 @@ def repondTOEIC(request,id_Toeic):
         formset = qcmFormSet(request.POST)
         if formset.is_valid():#Action de sécurité
             for form in formset: #On récupère chacune des réponses 
-                picked  = form.cleaned_data.get('picked')
-                userReponses.append(picked) #On met chacune des réponses dans une liste
+                question  = form.cleaned_data.get('question')
+                userReponses.append(question) #On met chacune des réponses dans une liste
         print(userReponses)
         print(listeBonneReponse)
         score = comparaisonReponse(listeBonneReponse,userReponses)
         print(score)
+        return redirect(home)
 
     return render(request, template_name, {'formset':formset })
 
-def liste(request,nom,querryset):  
+def liste(request,nom,querryset,url):  
     context ={
         "titre":nom,
         "liste":querryset
@@ -72,7 +76,13 @@ def liste_Eleve(request):
 def liste_Classe(request):
     return liste(request,"Classes",Classe.objects.all())  
 def liste_TOEIC(request):
-    return liste(request,"libelleTOEIC",TOEIC.objects.all()) 
+    # TODO afficher seulement les toeics avec des réponses
+ 
+    context ={
+        "titre":"Liste de Toeic",
+        "liste":TOEIC.objects.all()
+    }
+    return render(request,"liste.html",context) 
 def liste_groupe(request):
     return lsite(request,"Groupes",Groupe.objects.all())
 
