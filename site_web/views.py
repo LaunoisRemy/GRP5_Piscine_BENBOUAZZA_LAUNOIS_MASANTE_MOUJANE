@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from .models import *
 from django.db.models import Sum,Avg,FloatField
 from django.db.models.functions import Exp
-from .fonctions_TOEIC import NOTE_L
+from .fonctions_TOEIC import NOTE_L,NOTE_R
 from django.db.models.functions import Cast
 
 
@@ -59,11 +59,14 @@ def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pri
 
     listTest = list(scoretot) # Transformation de la query set en list
     for i in listTest : 
-        i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
-        
+        if i["id_SousPartie__type_Partie"]=="L":
+            i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
+        else:
+            i["score"]=(NOTE_R(i["score"]))
+    
+    #Pour afficher les toeic, je pense qu'il faudrait créer un model qui recupère les notes calculées pour ne pas avoir à les recalculer à chaque fois
+    #qu'on veut les afficher.
 
-    #scoretot = scoretot.annotate(note=NOTE_L(Cast('score',FloatField()))
-    #.values('lib_Partie').annotate(Sum('score')
     return liste(request,"Derniers résultats :",listTest)
 
     
