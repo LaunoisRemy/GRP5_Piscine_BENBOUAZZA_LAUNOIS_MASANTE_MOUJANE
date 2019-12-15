@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from .models import *
-from .forms import qcm, qcmFormSet
+from .forms import *
 
 
 
@@ -57,12 +57,39 @@ def repondTOEIC(request,id_Toeic):
             for form in formset: #On récupère chacune des réponses 
                 question  = form.cleaned_data.get('question')
                 userReponses.append(question) #On met chacune des réponses dans une liste
-        print(userReponses)
-        print(listeBonneReponse)
         score = comparaisonReponse(listeBonneReponse,userReponses)
-        print(score)
         return redirect(home)
 
+    return render(request, template_name, {'formset':formset })
+
+
+def repondTOEIC(request):
+    template_name ='toeic.html' #Nom de la page
+    if request.method == 'GET': #Pour récupérer la page
+        formset = qcmFormSet(request.GET or None)
+    elif request.method == 'POST':
+        userReponses=[]
+        formset = qcmFormSet(request.POST)
+        if formset.is_valid():#Action de sécurité
+            toeic = ToeicForm({'lib_TOEIC': "test"})
+            toeic.save()
+            question = list(TOEIC.objects.filter( lib_TOEIC="test"))
+            idToeic = question[len(question)-1].id
+            i=0        
+            for form in formset: #On récupère chacune des réponses 
+                reponse  = form.cleaned_data.get('question')
+                if(i<2):
+                    data = {
+                        'id_Question' : i,
+                        'id_TOEIC' : idToeic,
+                        'id_SousPartie' : 1,
+                        'reponse_Juste' : reponse
+                    }
+                    questionForm = QuestionForm(data)
+                    questionForm.save()
+                i+=1
+                userReponses.append(question) #On met chacune des réponses dans une liste
+        #return redirect(home)
     return render(request, template_name, {'formset':formset })
 
 def liste(request,nom,querryset,url):  
