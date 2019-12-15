@@ -56,8 +56,8 @@ def repondTOEIC(request,id_Toeic):
                 userReponses.append(picked) #On met chacune des réponses dans une liste
         print(userReponses)
         print(listeBonneReponse)
-    score = comparaisonReponse(listeBonneReponse,userReponses)
-    print(score)
+        score = comparaisonReponse(listeBonneReponse,userReponses)
+        print(score)
 
     return render(request, template_name, {'formset':formset })
 
