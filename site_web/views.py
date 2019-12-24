@@ -57,20 +57,54 @@ def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pri
         score=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score')
 
 
-    listTest = list(scoretot) # Transformation de la query set en list
-    for i in listTest : 
+    ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
+
+    ##Ici on fait la liste qui contient les notes par partie
+    for i in ListeNoteParPartie : 
         if i["id_SousPartie__type_Partie"]=="L":
             i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
         else:
             i["score"]=(NOTE_R(i["score"]))
+
+    listeR=[]
+    listeL=[]
+    listeTOT=[]
+    Tout=[]
+
+    #On créer la liste des notes Listening
+
+    for i in ListeNoteParPartie : 
+        if i["id_SousPartie__type_Partie"]=="L":
+            listeL.append(i)
+
+    #On créer la liste des notes Reading
+
+    for i in ListeNoteParPartie : 
+        if i["id_SousPartie__type_Partie"]=="R":
+            listeR.append(i)
+
+    #Oncréer la liste des notes Total
+
+    for i in range(len(listeR)):
+        scoretot=listeR[i]["score"]+listeL[i]["score"]
+        nouveauquery= {'id_TOEIC': listeR[i]["id_TOEIC"], 'id_Eleve__nom': listeR[i]["id_Eleve__nom"], 'id_SousPartie__type_Partie': 'TOT', 'score': scoretot}
+        listeTOT.append(nouveauquery)
+
+    for i in range(len(listeR)):
+        Tout.append(listeR[i])
+        Tout.append(listeL[i])
+        Tout.append(listeTOT)
+
+    
+    
+    #scoretot=query(ListeNoteParPartie)
     
     #Pour afficher les toeic, je pense qu'il faudrait créer un model qui recupère les notes calculées pour ne pas avoir à les recalculer à chaque fois
     #qu'on veut les afficher.
 
-    return liste(request,"Derniers résultats :",listTest)
+    #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
+    return liste(request,"Derniers résultats :",Tout)
 
-    
-    #print(scoretot)
 
     ### C'est ici que le professeur peut voir les statistiques sur les résultats de toeic
 def espace_professeur(request):
