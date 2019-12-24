@@ -93,7 +93,7 @@ def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pri
     for i in range(len(listeR)):
         Tout.append(listeR[i])
         Tout.append(listeL[i])
-        Tout.append(listeTOT)
+        Tout.append(listeTOT[i])
 
     
     
