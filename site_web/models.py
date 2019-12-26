@@ -40,7 +40,7 @@ class Question(models.Model):
     class Meta:
         unique_together = (("id_Question","id_TOEIC"),)
     def __str__(self):
-        return str(self.id_TOEIC) + ", question " + self.id_Question + " : " + self.reponse_Juste
+        return str(self.id_TOEIC) + ", Sous partie :"+ str(self.id_SousPartie) +", question " + self.id_Question + " : " + self.reponse_Juste
 
 class Sous_partie(models.Model): 
     lib_Partie=models.CharField(max_length=1) 

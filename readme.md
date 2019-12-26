@@ -10,3 +10,4 @@ Deux moyen :
 - Creer un environnement python : python3 -m venv env
 - Mettre a jour pip : python -m pip install --upgrade pip
 - Installer la version django : pip install -r requirements.txt
+- Problème de base de donnée python .\manage.py migrate --run-syncdb 

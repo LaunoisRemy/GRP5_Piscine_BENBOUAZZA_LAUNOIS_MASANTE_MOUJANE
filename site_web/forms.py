@@ -19,3 +19,8 @@ class ToeicForm(forms.ModelForm):
     class Meta:
         model = TOEIC
         fields = '__all__'
+
+class ScoreParPartieForm(forms.ModelForm):
+    class Meta:
+        model = ScoreParPartie
+        fields = '__all__'
