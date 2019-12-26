@@ -1,0 +1,15 @@
+<!--DOCTYPE html> -->
+<html>
+    <body>
+        <h1>{{ titre }}</h1>
+
+        {% for obj in liste %}
+        <li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
+         <br/> 
+         {% endfor %}
+         <a class="btn btn-primary" href="/creerTOEIC">
+            <input type='submit' value='creer un Toeic' id="creerToeic">
+        </a>
+         
+    </body>
+</html>
