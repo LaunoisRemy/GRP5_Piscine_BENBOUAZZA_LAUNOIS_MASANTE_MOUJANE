@@ -1,11 +1,6 @@
-<!--DOCTYPE html> -->
-<html>
-    <body>
-        <h1>{{ titre }}</h1>
+{% extends 'base.html' %}
+{% block content %}
 
-        {% for obj in liste %}
-        {{obj.id}}
-        {{obj}} <br/> 
-        {% endfor %}
-    </body>
-</html>
+<h1>{{ titre }}</h1>
+
+{% endblock %}

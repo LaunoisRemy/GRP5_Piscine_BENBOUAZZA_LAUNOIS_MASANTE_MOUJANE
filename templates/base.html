@@ -1,0 +1,35 @@
+{% load static %}
+<!--DOCTYPE html> -->
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    
+    <body>
+        {% block nav %}
+        <div class="container">
+            <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Toeic</a>
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <!-- <li>{% block nav-home %}<a href="{% url 'index' %}">Home</a>{% endblock %}</li> -->
+                            <li>{% block nav-liste_Toeic %}<a href="{% url 'liste_TOEIC' %}">liste des Toeic</a>{% endblock %}</li>
+                            <li>{% block nav-pageProf %}<a href="{% url 'espace_professeur' %}">Page prof</a>{% endblock %}</li>
+                            <li>{% block nav-pageEleve %}<a href="{% url 'liste_TOEIC' %}">liste des Toeic</a>{% endblock %}</li>
+                        </ul>
+                    </div>
+            </div>
+            </nav>
+        </div>
+        {% endblock %}
+
+
+        {% block content %}{% endblock %}
+        
+    </body>
+</html>

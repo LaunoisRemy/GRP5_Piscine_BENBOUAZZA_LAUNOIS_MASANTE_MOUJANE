@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ titre }}</h1>
+
+{% for obj in liste %}
+<li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
+ <br/> 
+ {% endfor %}
+ 
+ <a class="btn btn-primary" href="/creerTOEIC">
+    <button class="btn btn-primary" type="submit" id="creerToeic" >creer un Toeic</button>
+</a>
+<br/>
+
+
+{% endblock %}
