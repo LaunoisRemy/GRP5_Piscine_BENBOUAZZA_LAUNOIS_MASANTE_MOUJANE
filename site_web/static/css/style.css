@@ -1,6 +1,14 @@
-li{
+#toeic li{
     display: inline;
-    margin : auto;
+    margin : 25px 50px;
+    text-align: center;
+    color: black;
+}
+#toeic{
+    display: inline;
+    margin-left: 50px;
+    text-align: center;
+    font-size: large;
 }
 #valider {
     display: block;
