@@ -83,17 +83,20 @@ def repondTOEIC(request,id_Toeic):
     return render(request, template_name, {'formset':formset })
 
 
-def creerTOEIC(request):
+def creerTOEIC(request,nomToeic):
     template_name ='toeic.html' #Nom de la page
     if request.method == 'GET': #Pour récupérer la page
-        formset = qcmFormSet(request.GET or None)
+        print(nomToeic)
+        formset = qcmFormSet(None)
     elif request.method == 'POST':
+
         userReponses=[]
         formset = qcmFormSet(request.POST)
         if formset.is_valid():#Action de sécurité
-            toeic = ToeicForm({'lib_TOEIC': "test"})
+
+            toeic = ToeicForm({'lib_TOEIC': nomToeic})
             toeic.save()
-            question = list(TOEIC.objects.filter( lib_TOEIC="test"))
+            question = list(TOEIC.objects.filter( lib_TOEIC=nomToeic))
             idToeic = question[len(question)-1].id
             i=0        
             for form in formset: #On récupère chacune des réponses 
@@ -130,18 +133,29 @@ def liste_Eleve(request):
     return liste(request,"Eleves",Eleve.objects.all())  
 def liste_Classe(request):
     return liste(request,"Classes",Classe.objects.all())  
+
 def liste_TOEIC(request):
-    # TODO afficher seulement les toeics avec des réponses
     listToeic =  ( Question.objects.all().values('id_TOEIC').distinct() ) 
     toeic = TOEIC.objects.filter(id__in=listToeic)
     print(toeic)
+    if request.method == 'GET': #Pour récupérer la page
+        test = NomToeicForm(None)
+        context ={
+            "titre":"Liste de Toeic",
+            "liste":toeic,
+            "test" : test
+        }
+        return render(request,"listeToeic.html",context) 
+    elif request.method == 'POST':
+        form = NomToeicForm(request.POST)
+
+        if(form.is_valid()):
+            nom=form.cleaned_data.get('nom')
+            return redirect(creerTOEIC,nom)
+        return redirect(liste_TOEIC)
  
 
-    context ={
-        "titre":"Liste de Toeic",
-        "liste":toeic
-    }
-    return render(request,"listeToeic.html",context) 
+
 
 def liste_groupe(request):
     return liste(request,"Groupes",Groupe.objects.all())

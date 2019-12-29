@@ -11,7 +11,7 @@ urlpatterns = [
     # Le but ensuite est que une fois que l'utilisateur se connecte on récupère sa clé primaire et on lui affiche ses resultats
     path('espace_professeur', views.espace_professeur, name ="espace_professeur",),
     path('liste_TOEIC', views.liste_TOEIC, name="liste_TOEIC"),
-    path('creerTOEIC',views.creerTOEIC),
+    path('creerTOEIC/<str:nomToeic>',views.creerTOEIC),
     path('repondTOEIC/<int:id_Toeic>',views.repondTOEIC, name="repondTOEIC"),
 
 ]
