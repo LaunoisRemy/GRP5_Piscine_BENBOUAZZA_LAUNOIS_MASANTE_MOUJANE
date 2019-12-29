@@ -5,7 +5,10 @@ from django.db.models import Sum,Avg,FloatField
 from django.db.models.functions import Exp
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from django.db.models.functions import Cast
+from django.views.generic import TemplateView
 
+from .filters import SearchFilter
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -112,3 +115,11 @@ def espace_professeur(request):
         score_type=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
     return liste(request,"Voici tout les résultats :",scoretot)
     
+
+        
+
+    ### Vue dans laquelle on va utiliser le filtre SearchFilter
+def search(request):
+    user_list = ScoreParPartie.objects.all()
+    user_filter = SearchFilter(request.GET, queryset=user_list)
+    return render(request, 'espace_prof/search_user.html', {'filter': user_filter})

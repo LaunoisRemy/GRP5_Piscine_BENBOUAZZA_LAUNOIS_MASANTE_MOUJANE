@@ -49,8 +49,7 @@ class Sous_partie(models.Model):
     def __str__(self):
         return "Partie numéro : "+ self.lib_Partie +" " + self.type_Partie
 
-#class note_L(Func):
- #   function = 'EXP'
+
 
 class ScoreParPartie(models.Model): 
     id_Eleve=models.ForeignKey('Eleve',default=None, on_delete=models.CASCADE)  
