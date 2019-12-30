@@ -21,7 +21,10 @@
             {{ formset.management_form }}
        
             {% for form in formset %}
-                {{ form.as_p }}
+                <h4>{{ form.prefix }} :</h5>
+
+                {{ form.question }}
+                
             {% endfor %}
             <input type='submit' value='submit' id="valider">
         </form>

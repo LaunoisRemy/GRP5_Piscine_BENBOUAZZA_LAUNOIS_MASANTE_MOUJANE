@@ -35,11 +35,11 @@ def repondTOEIC(request,id_Toeic):
         raise Http404
 
     if request.method == 'GET': #Pour récupérer la page
-        formset = qcmFormSet(request.GET or None)  
+        formset = qcmFormSet(prefix=' Question ')  
     elif request.method == 'POST':
 
         userReponses=([],[])
-        formset = qcmFormSet(request.POST)
+        formset = qcmFormSet(request.POST,prefix=' Question ')
 
         compteurReponse=0
 
@@ -87,11 +87,11 @@ def creerTOEIC(request,nomToeic):
     template_name ='toeic.html' #Nom de la page
     if request.method == 'GET': #Pour récupérer la page
         print(nomToeic)
-        formset = qcmFormSet(None)
+        formset = qcmFormSet(prefix=' Question ')
     elif request.method == 'POST':
 
         userReponses=[]
-        formset = qcmFormSet(request.POST)
+        formset = qcmFormSet(request.POST,prefix=' Question ')
         if formset.is_valid():#Action de sécurité
 
             toeic = ToeicForm({'lib_TOEIC': nomToeic})
