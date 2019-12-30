@@ -36,6 +36,10 @@ def repondTOEIC(request,id_Toeic):
 
     if request.method == 'GET': #Pour récupérer la page
         formset = qcmFormSet(prefix=' Question ')  
+        for form in formset:
+            print(form.prefix + "x")
+            if(form.prefix ==  " Question -0"):
+                print("sdw")
     elif request.method == 'POST':
 
         userReponses=([],[])
@@ -86,7 +90,6 @@ def repondTOEIC(request,id_Toeic):
 def creerTOEIC(request,nomToeic):
     template_name ='toeic.html' #Nom de la page
     if request.method == 'GET': #Pour récupérer la page
-        print(nomToeic)
         formset = qcmFormSet(prefix=' Question ')
     elif request.method == 'POST':
 
@@ -137,7 +140,6 @@ def liste_Classe(request):
 def liste_TOEIC(request):
     listToeic =  ( Question.objects.all().values('id_TOEIC').distinct() ) 
     toeic = TOEIC.objects.filter(id__in=listToeic)
-    print(toeic)
     if request.method == 'GET': #Pour récupérer la page
         test = NomToeicForm(None)
         context ={
