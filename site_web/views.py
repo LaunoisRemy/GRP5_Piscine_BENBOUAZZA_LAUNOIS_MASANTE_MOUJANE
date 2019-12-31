@@ -6,7 +6,7 @@ from django.db.models.functions import Exp,Cast
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from .forms import *
 from .functions import *
-
+import datetime
 
 def home(request):
     if request.user.is_authenticated:
@@ -25,21 +25,23 @@ def home(request):
 Fonction qui permet de réaliser la vue lors d'un passage de TOEIC
 """
 def repondTOEIC(request,id_Toeic):
+    template_name ='toeic.html' #Nom de la page
+
+  
     listeBonneReponse = getBonneReponse(id_Toeic)
     nbRepReading = len(listeBonneReponse[0])
     nbRepListening = nbRepReading+ len(listeBonneReponse[1])
-    
-
     if len(listeBonneReponse) == 0 :
         raise Http404
 
-    template_name ='toeic.html' #Nom de la page
     if request.method == 'GET': #Pour récupérer la page
-        formset = qcmFormSet(request.GET or None)
+        formset = qcmFormSet(prefix=' Question ')  
     elif request.method == 'POST':
+
         userReponses=([],[])
+        formset = qcmFormSet(request.POST,prefix=' Question ')
+
         compteurReponse=0
-        formset = qcmFormSet(request.POST)
 
         if formset.is_valid():#Action de sécurité
             for form in formset: #On récupère chacune des réponses 
@@ -59,19 +61,21 @@ def repondTOEIC(request,id_Toeic):
         # Sauvegarde du score
         
         for ssPartie in range(0,2):
-            
+            #Score a sauvegarder
             data = {
                 'id_Eleve' : eleve.id,
                 'id_TOEIC' : id_Toeic,
                 'id_SousPartie' : ssPartie+1,
-                'score' : score[ssPartie]
-
+                'score' : score[ssPartie],
+                'date_Passage' : datetime.datetime.now()
             }
             
             scorePartie = ScoreParPartieForm(data)
             if(scorePartie.is_valid()):
                 scorePartie.save()
                 print("yes") 
+            else:
+                print("no")
 
         print(listeBonneReponse)
         print(userReponses)   
@@ -81,17 +85,19 @@ def repondTOEIC(request,id_Toeic):
     return render(request, template_name, {'formset':formset })
 
 
-def creerTOEIC(request):
+def creerTOEIC(request,nomToeic):
     template_name ='toeic.html' #Nom de la page
     if request.method == 'GET': #Pour récupérer la page
-        formset = qcmFormSet(request.GET or None)
+        formset = qcmFormSet(prefix=' Question ')
     elif request.method == 'POST':
+
         userReponses=[]
-        formset = qcmFormSet(request.POST)
+        formset = qcmFormSet(request.POST,prefix=' Question ')
         if formset.is_valid():#Action de sécurité
-            toeic = ToeicForm({'lib_TOEIC': "test"})
+
+            toeic = ToeicForm({'lib_TOEIC': nomToeic})
             toeic.save()
-            question = list(TOEIC.objects.filter( lib_TOEIC="test"))
+            question = list(TOEIC.objects.filter( lib_TOEIC=nomToeic))
             idToeic = question[len(question)-1].id
             i=0        
             for form in formset: #On récupère chacune des réponses 
@@ -122,23 +128,35 @@ def liste(request,nom,querryset):
         "titre":nom,
         "liste":querryset
     }
-    return render(request,"index.html",context)  
+    return render(request,"liste.html",context)  
+
 def liste_Eleve(request):
     return liste(request,"Eleves",Eleve.objects.all())  
 def liste_Classe(request):
     return liste(request,"Classes",Classe.objects.all())  
+
 def liste_TOEIC(request):
-    # TODO afficher seulement les toeics avec des réponses
     listToeic =  ( Question.objects.all().values('id_TOEIC').distinct() ) 
     toeic = TOEIC.objects.filter(id__in=listToeic)
-    print(toeic)
+    if request.method == 'GET': #Pour récupérer la page
+        test = NomToeicForm(None)
+        context ={
+            "titre":"Liste de Toeic",
+            "liste":toeic,
+            "test" : test
+        }
+        return render(request,"listeToeic.html",context) 
+    elif request.method == 'POST':
+        form = NomToeicForm(request.POST)
+
+        if(form.is_valid()):
+            nom=form.cleaned_data.get('nom')
+            return redirect(creerTOEIC,nom)
+        return redirect(liste_TOEIC)
  
 
-    context ={
-        "titre":"Liste de Toeic",
-        "liste":toeic
-    }
-    return render(request,"liste.html",context) 
+
+
 def liste_groupe(request):
     return liste(request,"Groupes",Groupe.objects.all())
 
@@ -146,7 +164,7 @@ def session(request):
     context ={
         "titre":"Session"
     }
-    return render(request,"index.html",context)
+    return render(request,"liste.html",context)
 
 def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pris en paramètre un id_eleve et affiche les résultats aux toeic de l'élève concerné
 
@@ -183,4 +201,3 @@ def espace_professeur(request):
     scoretot=ScoreParPartie.objects.values('id_TOEIC','id_SousPartie__type_Partie').annotate(
         score_type=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
     return liste(request,"Voici tout les résultats :",scoretot)
-    

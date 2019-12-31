@@ -28,7 +28,6 @@ class Eleve(models.Model):
 
 class TOEIC(models.Model):
     lib_TOEIC=models.CharField(max_length=20) 
-    #date=models.DateField()
     def __str__(self):
         return "Toeic : " +self.lib_TOEIC
 
@@ -56,6 +55,7 @@ class ScoreParPartie(models.Model):
     id_Eleve=models.ForeignKey('Eleve',default=None, on_delete=models.CASCADE)  
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE)  
     id_SousPartie=models.ForeignKey('Sous_partie',default=None, on_delete=models.CASCADE) 
+    date_Passage = models.DateTimeField()
     score=models.IntegerField() 
     class Meta:
         unique_together = (("id_SousPartie","id_TOEIC","id_Eleve"),)

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ titre }}</h1>
+
+{% for obj in liste %}
+
+<li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
+ <br/> 
+ {% endfor %}
+
+<br/>
+<form method='post'>
+    {% csrf_token %}
+
+    <!-- Nom du toeic : <input type="text" name="NomToeic" required> -->
+    {{ test }}
+    <input type="submit" value='Creer TOEIC' > 
+</form>
+{% endblock %}

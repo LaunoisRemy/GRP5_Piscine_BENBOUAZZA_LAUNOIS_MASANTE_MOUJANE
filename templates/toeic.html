@@ -21,7 +21,20 @@
             {{ formset.management_form }}
        
             {% for form in formset %}
-                {{ form.as_p }}
+
+                {% ifequal form.prefix  " Question -0" %}
+                    <h3>Listening</h3>
+                {% endifequal %}
+
+                {% ifequal form.prefix  " Question -2" %}       
+                    <hr>
+                    <h3>Reading</h3>
+                {% endifequal %}
+
+                <h4>{{ form.prefix }} :</h5>
+
+                {{ form.question }}
+                
             {% endfor %}
             <input type='submit' value='submit' id="valider">
         </form>
