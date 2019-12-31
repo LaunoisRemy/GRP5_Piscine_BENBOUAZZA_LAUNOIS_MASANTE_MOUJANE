@@ -6,7 +6,7 @@ from django.db.models.functions import Exp,Cast
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from .forms import *
 from .functions import *
-
+import datetime
 
 def home(request):
     if request.user.is_authenticated:
@@ -36,10 +36,6 @@ def repondTOEIC(request,id_Toeic):
 
     if request.method == 'GET': #Pour récupérer la page
         formset = qcmFormSet(prefix=' Question ')  
-        for form in formset:
-            print(form.prefix + "x")
-            if(form.prefix ==  " Question -0"):
-                print("sdw")
     elif request.method == 'POST':
 
         userReponses=([],[])
@@ -70,14 +66,16 @@ def repondTOEIC(request,id_Toeic):
                 'id_Eleve' : eleve.id,
                 'id_TOEIC' : id_Toeic,
                 'id_SousPartie' : ssPartie+1,
-                'score' : score[ssPartie]
-
+                'score' : score[ssPartie],
+                'date_Passage' : datetime.datetime.now()
             }
             
             scorePartie = ScoreParPartieForm(data)
             if(scorePartie.is_valid()):
                 scorePartie.save()
                 print("yes") 
+            else:
+                print("no")
 
         print(listeBonneReponse)
         print(userReponses)   
