@@ -55,13 +55,13 @@ def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pri
     #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie','score')
 
     test = ScoreParPartie.objects.filter(id_Eleve=id_eleve)
-    print(test)
+
 
     ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
     scoretot = ScoreParPartie.objects.filter( # Query set
         id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
-        score=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score')
-
+        score=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_Eleve__prenom','id_SousPartie__type_Partie','score','id_TOEIC__lib_TOEIC')
+        ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
 
     ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
 
@@ -100,16 +100,15 @@ def espace_eleve(request, id_eleve): # Quand la fonction est appelée elle a pri
         Tout.append(listeR[i])
         Tout.append(listeL[i])
         Tout.append(listeTOT[i])
+    print('tTTTTTTTOUUOTUTTUTTUO()',Tout)
 
     #TODO il faudrait aussi afficher si le toeic est réussi ou non
-    
-    #scoretot=query(ListeNoteParPartie)
-    
-    #Pour afficher les toeic, je pense qu'il faudrait créer un model qui recupère les notes calculées pour ne pas avoir à les recalculer à chaque fois
-    #qu'on veut les afficher.
-
+    #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
+    context = {'resultats':Tout,'nom':Tout[0]['id_Eleve__nom'],'prenom':Tout[0]['id_Eleve__prenom']}
+    print('CONNNNNNTEXTXTTTXXTT',context)
     #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
-    return liste(request,"Derniers résultats :",Tout)
+    return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
+    
 
 
     ### C'est ici que le professeur peut voir les statistiques sur les résultats de toeic
@@ -117,7 +116,6 @@ def espace_professeur(request):
     scoretot=ScoreParPartie.objects.values('id_TOEIC','id_SousPartie__type_Partie').annotate(
         score_type=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
     return liste(request,"Voici tout les résultats :",scoretot)
-    
 
         
 
