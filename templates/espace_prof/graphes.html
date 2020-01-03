@@ -1,11 +1,11 @@
 
 
-{% block title %} Stats par sous partie {% endblock %}
-
-{% block content %}
 
 <html lang="en">
 <head>
+    {% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'affichageGraphes/style.css' %}" >
    <!-- jQuery CDN -->
     <script
     src="https://code.jquery.com/jquery-1.12.4.min.js"
@@ -13,12 +13,13 @@
     crossorigin="anonymous"></script>
      <!-- highcharts CDN -->
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
+    
 
     {% load chartit %}
     {{ chart_list|load_charts:"cht1, cht2, cht3, cht4, chtL, chtR" }}
 </head>
 <body>
-    <title>Bonnes réponses par sous partie (1,2,3, ...)</title>
+    <h1>Bonnes réponses par sous partie (1,2,3, ...)</h1>
 
     <div id='cht1'> Partie 1 </div>
     <hr>
@@ -29,7 +30,7 @@
     <div id='cht4'> Partie 4 </div>
     <hr>
 
-    <title>Bonnes réponses par partie LISTENING/READING</title>
+    <h2>Bonnes réponses par partie LISTENING/READING</h2>
 
     <div id='chtL'> LISTENING </div>
     <hr>
@@ -38,5 +39,3 @@
 
 </body>
 </html>
-
-{% endblock %}

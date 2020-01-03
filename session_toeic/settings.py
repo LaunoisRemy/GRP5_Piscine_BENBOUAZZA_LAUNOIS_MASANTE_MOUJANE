@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Ajouté pour le static css
+STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'statics'),
+   ]
+STATIC_URL = '/static/'
+
 
 # Application definition
 

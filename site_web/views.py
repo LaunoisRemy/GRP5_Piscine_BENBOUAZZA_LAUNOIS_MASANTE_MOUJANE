@@ -130,9 +130,142 @@ def filtre_note_par_partie(request):
     ### PROBLEME : Calcul bien la somme des bonne réponse par partie mais problème d'affichage
     print(user_list)
     user_filter = FiltreNoteParPartie(request.GET, queryset=user_list) #Récup
-    #user_filter n'est pas un queryset, user_filter.qd l'est !
+    #user_filter n'est pas un queryset, user_filter.qs l'est !
     print("Le filtre récupéré",user_filter.qs)
     
+    fieldname = 'score'
+    requete1 = user_filter.qs.filter(id_SousPartie__lib_Partie=1).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requete2 = user_filter.qs.filter(id_SousPartie__lib_Partie=2).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requete3 = user_filter.qs.filter(id_SousPartie__lib_Partie=3).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requete4 = user_filter.qs.filter(id_SousPartie__lib_Partie=4).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requete5 = user_filter.qs.filter(id_SousPartie__lib_Partie=5).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requete6 = user_filter.qs.filter(id_SousPartie__lib_Partie=6).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requete7 = user_filter.qs.filter(id_SousPartie__lib_Partie=7).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requete8 = user_filter.qs.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    print('requeteR :',requeteR)
+
+
+    # Graph partie 1
+
+    search1 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete1},
+            'terms': ['the_count','score']}
+            ])
+    cht1 = Chart(
+        datasource = search1,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+                    
+        chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+    )
+    ## Graph partie 2
+    search2 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete2},
+            'terms': ['the_count','score']}
+            ])
+    cht2 = Chart(
+        datasource = search2,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+        chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+                    )
+
+    ## Graph partie 3
+    search3 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete3},
+            'terms': ['the_count','score']}
+            ])
+    cht3 = Chart(
+        datasource = search3,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] 
+                    )
+    ## Graph partie 4
+    search4 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete4},
+            'terms': ['the_count','score']}
+            ])
+    cht4 = Chart(
+        datasource = search4,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+
+         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+                    )
+
+    ## Graph partie R
+
+    searchR =  DataPool(
+        series=
+        [{'options': {
+            'source': requeteR},
+            'terms': ['the_count','score']}
+            ])
+    chtR = Chart(
+        datasource = searchR,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+
+         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+                    )
+    ## Graph partie L
+    searchL =  DataPool(
+        series=
+        [{'options': {
+            'source': requeteL},
+            'terms': ['the_count','score']}
+            ])
+    chtL = Chart(
+        datasource = searchL,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+
+         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1},
+        'min': 0,'max':10}
+                    )
+
+    
+
+    return render(request,'espace_prof/search_user.html',{'chart_list':[cht1,cht2,cht3,cht4,chtL,chtR],'filter': user_filter})
 
 
 
