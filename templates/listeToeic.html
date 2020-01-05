@@ -10,6 +10,7 @@
  {% endfor %}
 
 <br/>
+<div id="listeTOEIC">
 <form method='post'>
     {% csrf_token %}
 
@@ -17,4 +18,5 @@
     {{ test }}
     <input type="submit" value='Creer TOEIC' > 
 </form>
+</div>
 {% endblock %}
