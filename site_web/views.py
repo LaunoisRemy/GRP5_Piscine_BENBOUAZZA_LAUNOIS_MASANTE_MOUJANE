@@ -210,19 +210,23 @@ def register(request):
 
     if request.method == 'GET':
         form = UserForm()
-        context = { 'form' : form }
+        formUser = UserCreationForm()
+        context = { 'form' : form , 'formUser' : formUser}
         return render(request,'registration/register.html', context)
     elif request.method == 'POST':
 
         form = UserForm(request.POST)
-
-        if form.is_valid():
-
-            form.save()
-            username = form.cleaned_date['username']
-            password = form.cleaned_data['paswword1']
+        formUser = UserCreationForm(request.POST)
+        if form.is_valid() and formUser.is_valid():
+            formUser.save()
+            # TODO cleaned data
+            username = formUser.cleaned_date['username']
+            password = formUser.cleaned_data['paswword1']
             user = authenticate(username=username, password=password)
             login(request, user)
+            post = form.save(commit=False)
+            post.user = formUser
+            post.save()
             return redirect('home')
         else :
             return redirect('espace_professeur')
