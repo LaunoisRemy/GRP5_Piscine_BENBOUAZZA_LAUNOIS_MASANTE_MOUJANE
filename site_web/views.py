@@ -147,12 +147,14 @@ def filtre_note_par_partie(request):
     print('requeteR :',requeteR)
 
 
+    test1 = [{'the_count':3,'score':8},{'the_count':2,'score':9}]
+
     # Graph partie 1
 
     search1 =  DataPool(
         series=
         [{'options': {
-            'source': requete1},
+            'source': test1},
             'terms': ['the_count','score']}
             ])
     cht1 = Chart(
