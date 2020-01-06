@@ -128,10 +128,10 @@ def search(request):
 def filtre_note_par_partie(request):
     user_list = ScoreParPartie.objects.all()#.values('id_TOEIC','id_SousPartie__type_Partie').annotate(score=Sum('score')).values('id_TOEIC','score','id_SousPartie__lib_Partie','id_Eleve__nom',)
     ### PROBLEME : Calcul bien la somme des bonne réponse par partie mais problème d'affichage
-    print(user_list)
+    #print(user_list)
     user_filter = FiltreNoteParPartie(request.GET, queryset=user_list) #Récup
     #user_filter n'est pas un queryset, user_filter.qs l'est !
-    print("Le filtre récupéré",user_filter.qs)
+    #print("Le filtre récupéré",user_filter.qs)
     
     fieldname = 'score'
     requete1 = user_filter.qs.filter(id_SousPartie__lib_Partie=1).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
@@ -142,19 +142,28 @@ def filtre_note_par_partie(request):
     requete6 = user_filter.qs.filter(id_SousPartie__lib_Partie=6).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requete7 = user_filter.qs.filter(id_SousPartie__lib_Partie=7).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requete8 = user_filter.qs.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    print('requeteR :',requeteR)
+    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+
+    # requeteR fait d'abord la somme des bonne réponse par
+    #fieldnameR='total_scoreR'
+
+    #print('Avant la somme',user_filter.qs.filter(id_SousPartie__type_Partie='R'))
+    #requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').order_by('id_TOEIC','id_Eleve').annotate(the_count=Count(Sum('score')))#.aggregate(the_count=Count(fieldnameR))
+    #print("############REQUETE R@@@@@@@@@@@@",requeteR)#.filter('total_scoreR'==94))
+    #requeteR = requeteR.filter(id_SousPartie__type_Partie='R').values('id_TOEIC').aggregate(Sum('score')).values(fieldnameR).order_by(fieldnameR).annotate(the_count=Count(fieldnameR))
+   # requeteR = requeteR.values(fieldnameR).order_by(fieldnameR).annotate(the_count=Count(fieldnameR))
 
 
-    test1 = [{'the_count':3,'score':8},{'the_count':2,'score':9}]
+
+    #test1 = [{'the_count':3,'score':8},{'the_count':2,'score':9}]
 
     # Graph partie 1
 
     search1 =  DataPool(
         series=
         [{'options': {
-            'source': test1},
+            'source': requete1},
             'terms': ['the_count','score']}
             ])
     cht1 = Chart(
@@ -223,6 +232,84 @@ def filtre_note_par_partie(request):
          chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
         'xAxis': {'tickInterval':1}}
                     )
+    
+    ## Graph partie 5
+    search5 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete5},
+            'terms': ['the_count','score']}
+            ])
+    cht5 = Chart(
+        datasource = search5,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+
+         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+                    )
+    ## Graph partie 6
+    search6 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete6},
+            'terms': ['the_count','score']}
+            ])
+    cht6 = Chart(
+        datasource = search6,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+
+         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+                    )
+    ## Graph partie 7
+    search7 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete7},
+            'terms': ['the_count','score']}
+            ])
+    cht7 = Chart(
+        datasource = search7,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+
+         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+                    )
+    ## Graph partie 8
+    search8 =  DataPool(
+        series=
+        [{'options': {
+            'source': requete8},
+            'terms': ['the_count','score']}
+            ])
+    cht8 = Chart(
+        datasource = search8,            
+        series_options = 
+        [{'options':{'type':'column','stacking':False},
+        'terms':{                    
+            'score': [
+                'the_count']
+                    }}] ,
+
+         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
+        'xAxis': {'tickInterval':1}}
+                    )
+
 
     ## Graph partie R
 
@@ -267,7 +354,7 @@ def filtre_note_par_partie(request):
 
     
 
-    return render(request,'espace_prof/search_user.html',{'chart_list':[cht1,cht2,cht3,cht4,chtL,chtR],'filter': user_filter})
+    return render(request,'espace_prof/search_user.html',{'chart_list':[cht1,cht2,cht3,cht4,cht5,cht6,cht7,cht8,chtL,chtR],'filter': user_filter})
 
 
 
