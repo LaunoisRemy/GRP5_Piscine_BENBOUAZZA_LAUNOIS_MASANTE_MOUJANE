@@ -28,4 +28,9 @@ class ScoreParPartieForm(forms.ModelForm):
 class NomToeicForm(forms.Form):
     nom = forms.CharField(label='Nom du toeic : ', required=True,widget=forms.TextInput(attrs={'required': "required"}), max_length=100 )
 
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = Eleve
+        fields = ["nom","prenom","classe","groupe"]
+    
 

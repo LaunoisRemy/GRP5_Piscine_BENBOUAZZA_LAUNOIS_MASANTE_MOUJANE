@@ -1,5 +1,7 @@
 from django.db import models
 from django.db.models import Func
+from django.contrib.auth.models import User
+
 #from site_web.fonctions_TOEIC import NOTE_L
 # Create your models here.
 
@@ -18,6 +20,7 @@ class Groupe(models.Model):
 
         
 class Eleve(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     nom=models.CharField(max_length=50)
     prenom=models.CharField(max_length=50)
     classe=models.ForeignKey('Classe',default=None, on_delete=models.CASCADE) #Un élève appartient forcément à une classe

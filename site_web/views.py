@@ -6,6 +6,9 @@ from django.db.models.functions import Exp,Cast
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from .forms import *
 from .functions import *
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login
+
 import datetime
 
 def home(request):
@@ -201,3 +204,27 @@ def espace_professeur(request):
     scoretot=ScoreParPartie.objects.values('id_TOEIC','id_SousPartie__type_Partie').annotate(
         score_type=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
     return liste(request,"Voici tout les résultats :",scoretot)
+
+
+def register(request):
+
+    if request.method == 'GET':
+        form = UserForm()
+        context = { 'form' : form }
+        return render(request,'registration/register.html', context)
+    elif request.method == 'POST':
+
+        form = UserForm(request.POST)
+
+        if form.is_valid():
+
+            form.save()
+            username = form.cleaned_date['username']
+            password = form.cleaned_data['paswword1']
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('home')
+        else :
+            return redirect('espace_professeur')
+
+
