@@ -221,13 +221,8 @@ def register(request):
         print(formUser.errors)
         if form.is_valid() and formUser.is_valid():
             user = formUser.save()
-
-            
-
             login(request, user)
         
-        
-
             post = form.save(commit=False)
             post.user = user
             post.save()
