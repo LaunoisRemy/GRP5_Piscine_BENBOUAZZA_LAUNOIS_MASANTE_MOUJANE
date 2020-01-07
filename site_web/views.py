@@ -217,20 +217,25 @@ def register(request):
 
         form = UserForm(request.POST)
         formUser = UserCreationForm(request.POST)
+        print(form.is_valid(),formUser.is_valid())
+        print(formUser.errors)
         if form.is_valid() and formUser.is_valid():
             user = formUser.save()
 
-            """# TODO cleaned data
-            username = formUser.cleaned_date['username']
-            password = formUser.cleaned_data['paswword1']
-            user = authenticate(username=username, password=password)
+            
+
             login(request, user)
-            """
+        
         
 
             post = form.save(commit=False)
             post.user = user
             post.save()
+
+            username = user.username
+            password = user.password
+            user = authenticate(username=username, password=password)
+
             return redirect(home)
         else :
             return redirect('espace_professeur')
