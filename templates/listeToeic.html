@@ -10,13 +10,17 @@
  {% endfor %}
 
 <br/>
-<div id="listeTOEIC">
-<form method='post'>
-    {% csrf_token %}
 
-    <!-- Nom du toeic : <input type="text" name="NomToeic" required> -->
-    {{ test }}
-    <input type="submit" value='Creer TOEIC' > 
-</form>
+
+<div id="listeTOEIC">
+    <div class="form-group">
+        <form method='post'>
+            {% csrf_token %}
+
+            <!-- Nom du toeic : <input type="text" name="NomToeic" required> -->
+            {{ test }}
+            <input type="submit" value='Creer TOEIC' > 
+        </form>
+    </div>
 </div>
 {% endblock %}
