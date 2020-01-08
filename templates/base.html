@@ -29,10 +29,14 @@
                     <a class="nav-link"  href="{% url 'espace_professeur' %}">Page prof</a>
                 </li>
                 {% endif %}
+
+                {% if user.is_authenticated is not True %}
                 <li class="nav-item active">
                   <a class="nav-link"  href="{% url 'login' %}">Connexion</a>
                 </li>
-
+                {% endif %}
+                
+                
 
                 
               </ul>

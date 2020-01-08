@@ -76,9 +76,7 @@ def repondTOEIC(request,id_Toeic):
             scorePartie = ScoreParPartieForm(data)
             if(scorePartie.is_valid()):
                 scorePartie.save()
-                print("yes") 
-            else:
-                print("no")
+       
 
         print(listeBonneReponse)
         print(userReponses)   
@@ -105,7 +103,7 @@ def creerTOEIC(request,nomToeic):
             i=0        
             for form in formset: #On récupère chacune des réponses 
                 reponse  = form.cleaned_data.get('question')
-                if(i<2):
+                if(i<100):
                     data = {
                         'id_Question' : i,
                         'id_TOEIC' : idToeic,
