@@ -19,7 +19,7 @@
             {% csrf_token %}
             
             {{ formset.management_form }}
-       
+            
             {% for form in formset %}
 
                 {% ifequal form.prefix  " Question -0" %}
@@ -30,10 +30,12 @@
                     <hr>
                     <h3>Reading</h3>
                 {% endifequal %}
-
+            <div id="c1">
                 <h4>{{ form.prefix }} :</h5>
-
+            </div>
+            <div id="c2">
                 {{ form.question }}
+            </div>
                 
             {% endfor %}
             <input type='submit' value='submit' id="valider">
