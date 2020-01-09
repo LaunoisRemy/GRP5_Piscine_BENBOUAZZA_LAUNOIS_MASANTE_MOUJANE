@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 
 from chartit import DataPool, Chart
 
+import json
 # Create your views here.
 
 def home(request):
@@ -142,227 +143,88 @@ def filtre_note_par_partie(request):
     requete6 = user_filter.qs.filter(id_SousPartie__lib_Partie=6).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requete7 = user_filter.qs.filter(id_SousPartie__lib_Partie=7).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requete8 = user_filter.qs.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values('id_TOEIC','id_Eleve').order_by('id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
+    requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values('id_TOEIC','id_Eleve').order_by('id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
+    print(requeteR)
+  
 
-    # requeteR fait d'abord la somme des bonne réponse par
-    #fieldnameR='total_scoreR'
-
-    #print('Avant la somme',user_filter.qs.filter(id_SousPartie__type_Partie='R'))
-    #requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').order_by('id_TOEIC','id_Eleve').annotate(the_count=Count(Sum('score')))#.aggregate(the_count=Count(fieldnameR))
-    #print("############REQUETE R@@@@@@@@@@@@",requeteR)#.filter('total_scoreR'==94))
-    #requeteR = requeteR.filter(id_SousPartie__type_Partie='R').values('id_TOEIC').aggregate(Sum('score')).values(fieldnameR).order_by(fieldnameR).annotate(the_count=Count(fieldnameR))
-   # requeteR = requeteR.values(fieldnameR).order_by(fieldnameR).annotate(the_count=Count(fieldnameR))
+    # On exprime transmet les données des queryset en liste pour être plus maniable, avec chartit problèmes pour les notes etc
+    # du coup j'ai changé et utilisé highchart qui utilise les listes.
+    # Certes moins efficace mais beaucoup plus maniable
 
 
-
-    #test1 = [{'the_count':3,'score':8},{'the_count':2,'score':9}]
-
-    # Graph partie 1
-
-    search1 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete1},
-            'terms': ['the_count','score']}
-            ])
-    cht1 = Chart(
-        datasource = search1,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-                    
-        chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-    )
-    ## Graph partie 2
-    search2 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete2},
-            'terms': ['the_count','score']}
-            ])
-    cht2 = Chart(
-        datasource = search2,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-        chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-
-    ## Graph partie 3
-    search3 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete3},
-            'terms': ['the_count','score']}
-            ])
-    cht3 = Chart(
-        datasource = search3,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] 
-                    )
-    ## Graph partie 4
-    search4 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete4},
-            'terms': ['the_count','score']}
-            ])
-    cht4 = Chart(
-        datasource = search4,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
+    score1 = [0,0,0,0,0,0,0]
+    cat1 = ["0","1","2","3","4","5","6"]
+    for j in requete1:
+        score1[j['score']]+=j['the_count']
+    score1 = json.dumps(score1)
+    cat1 = json.dumps(cat1)
     
-    ## Graph partie 5
-    search5 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete5},
-            'terms': ['the_count','score']}
-            ])
-    cht5 = Chart(
-        datasource = search5,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-    ## Graph partie 6
-    search6 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete6},
-            'terms': ['the_count','score']}
-            ])
-    cht6 = Chart(
-        datasource = search6,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-    ## Graph partie 7
-    search7 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete7},
-            'terms': ['the_count','score']}
-            ])
-    cht7 = Chart(
-        datasource = search7,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-    ## Graph partie 8
-    search8 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete8},
-            'terms': ['the_count','score']}
-            ])
-    cht8 = Chart(
-        datasource = search8,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-
-
-    ## Graph partie R
-
-    searchR =  DataPool(
-        series=
-        [{'options': {
-            'source': requeteR},
-            'terms': ['the_count','score']}
-            ])
-    chtR = Chart(
-        datasource = searchR,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-    ## Graph partie L
-    searchL =  DataPool(
-        series=
-        [{'options': {
-            'source': requeteL},
-            'terms': ['the_count','score']}
-            ])
-    chtL = Chart(
-        datasource = searchL,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1},
-        'min': 0,'max':10}
-                    )
-
+    score2=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    cat2 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25"]
+    for j in requete2:
+        score2[j['score']]+=j['the_count']
     
+    score2 = json.dumps(score2)
+    cat2 = json.dumps(cat2)
 
-    return render(request,'espace_prof/search_user.html',{'chart_list':[cht1,cht2,cht3,cht4,cht5,cht6,cht7,cht8,chtL,chtR],'filter': user_filter})
+    score3=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    cat3 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
+    for j in requete3:
+        score3[j['score']]+=j['the_count']
+    
+    score3 = json.dumps(score3)
+    cat3 = json.dumps(cat3)
 
+    score4=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    cat4 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
+    for j in requete4:
+        score4[j['score']]+=j['the_count']
+    
+    score4 = json.dumps(score4)
+    cat4 = json.dumps(cat4)
 
+    score5=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    cat5 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
+    for j in requete5:
+        score5[j['score']]+=j['the_count']
+    
+    score5 = json.dumps(score5)
+    cat5 = json.dumps(cat5)
 
+    score6 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    cat6 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]
+    for j in requete6:
+        score6[j['score']]+=j['the_count']
+    score6 = json.dumps(score6)
+    cat6 = json.dumps(cat6)
+    
+    score7=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    cat7 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54"]
+    for j in requete7:
+        score7[j['score']]+=j['the_count']
+    
+    score7 = json.dumps(score7)
+    cat7 = json.dumps(cat7)
+    
+    scoreR=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    catR = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"]
+    for j in requeteR:
+        scoreR[j['sommetot']]+=1
+    
+    scoreR = json.dumps(scoreR)
+    catR = json.dumps(catR)
+    
+    scoreL=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    catL = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"]
+    for j in requeteL:
+        scoreL[j['sommetot']]+=1
+    
+    scoreL = json.dumps(scoreL)
+    catL = json.dumps(catL)
 
+    return render(request,'espace_prof/search_user.html',{'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
 
-
-
-    return render(request, 'espace_prof/search_user.html', {'filter': user_filter})
 
 def graph1(request,user_filter):
     search1 =  DataPool(
@@ -387,144 +249,3 @@ def graph1(request,user_filter):
 
 ### Comment afficher le graph en plus du resultat de la recherche
 
-###Création des graphes
-
-def graphview(request):
-
-   #requete = ScoreParPartie.objects.all()
-   # for i in range(0,11):
-     #   requete = requete.annotate(score=i).aggregate(occ=Count('score'))
-
-    fieldname = 'score'
-    requete1 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=1).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete2 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=2).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete3 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=3).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete4 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=4).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete5 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=5).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete6 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=6).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete7 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=7).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete8 = ScoreParPartie.objects.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requeteR = ScoreParPartie.objects.filter(id_SousPartie__type_Partie='R').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requeteL = ScoreParPartie.objects.filter(id_SousPartie__type_Partie='L').values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    print('requeteR :',requeteR)
-
-
-    # Graph partie 1
-
-    search1 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete1},
-            'terms': ['the_count','score']}
-            ])
-    cht1 = Chart(
-        datasource = search1,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-                    
-        chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-    )
-    ## Graph partie 2
-    search2 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete2},
-            'terms': ['the_count','score']}
-            ])
-    cht2 = Chart(
-        datasource = search2,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-        chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-
-    ## Graph partie 3
-    search3 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete3},
-            'terms': ['the_count','score']}
-            ])
-    cht3 = Chart(
-        datasource = search3,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] 
-                    )
-    ## Graph partie 4
-    search4 =  DataPool(
-        series=
-        [{'options': {
-            'source': requete4},
-            'terms': ['the_count','score']}
-            ])
-    cht4 = Chart(
-        datasource = search4,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-
-    ## Graph partie R
-
-    searchR =  DataPool(
-        series=
-        [{'options': {
-            'source': requeteR},
-            'terms': ['the_count','score']}
-            ])
-    chtR = Chart(
-        datasource = searchR,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1}}
-                    )
-    ## Graph partie L
-    searchL =  DataPool(
-        series=
-        [{'options': {
-            'source': requeteL},
-            'terms': ['the_count','score']}
-            ])
-    chtL = Chart(
-        datasource = searchL,            
-        series_options = 
-        [{'options':{'type':'column','stacking':False},
-        'terms':{                    
-            'score': [
-                'the_count']
-                    }}] ,
-
-         chart_options = {'yAxis':{'allowDecimals':False,'tickInterval':1},
-        'xAxis': {'tickInterval':1},
-        'min': 0,'max':10}
-                    )
-
-    
-
-    return render(request,'espace_prof/graphes.html',{'chart_list':[cht1,cht2,cht3,cht4,chtL,chtR]})
