@@ -15,7 +15,7 @@ align-content: center;
 }
 
 .card{
-height: 370px;
+height: 400px;
 margin-top: auto;
 margin-bottom: auto;
 width: 400px;
@@ -89,4 +89,8 @@ margin-left: 4px;
 
 h1,h2,h3,p{
     color:white;
+}
+
+h3{
+    text-align: center;
 }
