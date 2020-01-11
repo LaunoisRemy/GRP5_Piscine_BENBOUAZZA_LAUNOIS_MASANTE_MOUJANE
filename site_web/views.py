@@ -232,5 +232,7 @@ def register(request):
             return redirect(home)
         else :
             return redirect('espace_professeur')
-
+def logout_view(request):
+    logout(request)
+    return redirect(home)
 
