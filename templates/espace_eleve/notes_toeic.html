@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+    <title>Résultats</title>
+
+</head>
+<body>
+    Espace de : {{nom}}  {{prenom}}<br>
+    Voici vos derniers résultats : <br><br>
+    {%for item in resultats%}
+        {%if item.id_SousPartie__type_Partie == "R" %}
+        Libellé TOEIC : {{item.id_TOEIC__lib_TOEIC}}
+        <br>    Reading : {{item.score}}/495<br>
+        {%else%}     
+        {%if item.id_SousPartie__type_Partie == "L" %}
+        Listening : {{item.score}}/495 <br>
+
+        {%else%}
+        Total : {{item.score}}/990 <br>
+        Réussi : 
+
+
+        {% if item.score < 815 %}
+        oui
+        {% else %}
+        non
+
+        {%endif%}
+        <br><br>
+
+
+        {% endif %}{% endif %}
+
+    {% endfor %}
+</body>
+</html>

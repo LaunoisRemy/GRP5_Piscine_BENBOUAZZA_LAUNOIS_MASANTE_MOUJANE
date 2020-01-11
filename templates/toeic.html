@@ -36,7 +36,9 @@
                 {{ form.question }}
                 </div>
             {% endfor %}
+            {% if user.is_superuser is not True %}
             <input type='submit' value='submit' id="valider">
+            {% endif %}
         </form>
    
 

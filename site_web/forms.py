@@ -7,7 +7,7 @@ class qcm(forms.Form):
                ('b','b'),
                ('c','c'),
                ('d','d'),)
-    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect())
+    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('a','a'))
 
 qcmFormSet = formset_factory(qcm, extra=200) #Création d'un TOEIC de 200 questions
 

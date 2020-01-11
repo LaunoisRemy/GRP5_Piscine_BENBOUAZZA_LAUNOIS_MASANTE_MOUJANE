@@ -37,6 +37,9 @@
                 </li>
                 {% else %}
                 <li class="nav-item active">
+                  <a class="nav-link"  href="{% url 'statistiques' %}">Statistiques</a>
+                </li>
+                <li class="nav-item active">
                   <a class="nav-link"  href="{% url 'logout' %}">Deconnexion</a>
                 </li>
                 {% endif %}
