@@ -1,66 +1,66 @@
 
 {% load static %}
+<html lang="en">
 
+  <head>
+    <!-- jQuery CDN -->
+     <script
+     src="https://code.jquery.com/jquery-1.12.4.min.js"
+     integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+     crossorigin="anonymous"></script>
+      <!-- highcharts CDN -->
+     <script src="https://code.highcharts.com/highcharts.src.js"></script>
+     <script src="https://code.highcharts.com/highcharts.js"></script>
+     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+ 
+   
+   <input type="hidden" id="cat1" name="variable" value="{{cat1}}">
+   <input type="hidden" id="score1" name="variable" value="{{score1}}">
+   <input type="hidden" id="cat2" name="variable" value="{{cat2}}">
+   <input type="hidden" id="score2" name="variable" value="{{score2}}">
+   <input type="hidden" id="cat3" name="variable" value="{{cat3}}">
+   <input type="hidden" id="score3" name="variable" value="{{score3}}">
+   <input type="hidden" id="cat4" name="variable" value="{{cat4}}">
+   <input type="hidden" id="score4" name="variable" value="{{score4}}">
+   <input type="hidden" id="cat5" name="variable" value="{{cat5}}">
+   <input type="hidden" id="score5" name="variable" value="{{score5}}">
+   <input type="hidden" id="cat6" name="variable" value="{{cat6}}">
+   <input type="hidden" id="score6" name="variable" value="{{score6}}">
+   <input type="hidden" id="cat7" name="variable" value="{{cat7}}">
+   <input type="hidden" id="score7" name="variable" value="{{score7}}">
+   <input type="hidden" id="catR" name="variable" value="{{catR}}">
+   <input type="hidden" id="scoreR" name="variable" value="{{scoreR}}">
+   <input type="hidden" id="catL" name="variable" value="{{catL}}">
+   <input type="hidden" id="scoreL" name="variable" value="{{scoreL}}">
+ </head>
   <form method="get">
     {{ filter.form.as_p }}
     <button type="submit">Search</button>
   </form>
-  <ul>
-  {% for user in filter.qs %}
-    <li>{{ user.id_TOEIC }} - Bonne réponses : {{ user.score }} - Sous partie numéro : {{ user.id_SousPartie.lib_Partie}} - {{user.id_SousPartie.type_Partie}} - Elève : {{user.id_Eleve.nom}} {{user.id_Eleve.prenom}}</li>
-  {% endfor %}
-  </ul>
+  
 
   <div1>
     {% block graphes %}
 
-    <html lang="en">
-<head>
-   <!-- jQuery CDN -->
-    <script
-    src="https://code.jquery.com/jquery-1.12.4.min.js"
-    integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-    crossorigin="anonymous"></script>
-     <!-- highcharts CDN -->
-    <script src="https://code.highcharts.com/highcharts.src.js"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+   
 
-  
-  <input type="hidden" id="cat1" name="variable" value="{{cat1}}">
-  <input type="hidden" id="score1" name="variable" value="{{score1}}">
-  <input type="hidden" id="cat2" name="variable" value="{{cat2}}">
-  <input type="hidden" id="score2" name="variable" value="{{score2}}">
-  <input type="hidden" id="cat3" name="variable" value="{{cat3}}">
-  <input type="hidden" id="score3" name="variable" value="{{score3}}">
-  <input type="hidden" id="cat4" name="variable" value="{{cat4}}">
-  <input type="hidden" id="score4" name="variable" value="{{score4}}">
-  <input type="hidden" id="cat5" name="variable" value="{{cat5}}">
-  <input type="hidden" id="score5" name="variable" value="{{score5}}">
-  <input type="hidden" id="cat6" name="variable" value="{{cat6}}">
-  <input type="hidden" id="score6" name="variable" value="{{score6}}">
-  <input type="hidden" id="cat7" name="variable" value="{{cat7}}">
-  <input type="hidden" id="score7" name="variable" value="{{score7}}">
-  <input type="hidden" id="catR" name="variable" value="{{catR}}">
-  <input type="hidden" id="scoreR" name="variable" value="{{scoreR}}">
-  <input type="hidden" id="catL" name="variable" value="{{catL}}">
-  <input type="hidden" id="scoreL" name="variable" value="{{scoreL}}">
-</head>
 <body>
-    <title>Bonnes réponses par sous partie (1,2,3, ...)</title>
+    <h1>Bonnes réponses par sous partie (1,2,3, ...)</h1>
 
-    <div id="container1" style="width:25%; height:200px;"></div>
-    <div id="container2" style="width:25%; height:200px;"></div>
-    <div id="container3" style="width:25%; height:200px;"></div>
-    <div id="container4" style="width:25%; height:200px;"></div>
-    <div id="container5" style="width:25%; height:200px;"></div>
-    <div id="container6" style="width:25%; height:200px;"></div>
-    <div id="container7" style="width:25%; height:200px;"></div>
+    <div id="container1" style="width:25%; height:25%px;"></div>
+    <div id="container2" style="width:25%; height:25%px;"></div>
+    <div id="container3" style="width:25%; height:25%px;"></div>
+    <div id="container4" style="width:25%; height:33%px;"></div>
+    <div id="container5" style="width:25%; height:33%px;"></div>
+    <div id="container6" style="width:25%; height:33%px;"></div>
+    <div id="container7" style="width:25%; height:33%px;"></div>
 
-    <title>Bonnes réponses par partie LISTENING/READING</title>
+    <h2>Bonnes réponses par partie LISTENING/READING</h2>
 
-    <div id="containerR" style="width:100%; height:400px;"></div>
-    <div id="containerL" style="width:100%; height:400px;"></div>
+    <div id="containerR" style="width:50%; height:400px;"></div>
+    <div id="containerL" style="width:50%; height:400px;"></div>
+
+
     
 
 </body>
@@ -319,6 +319,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }]
         });
     });
+
+  
+  
 
 </script>
 </html>

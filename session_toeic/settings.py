@@ -43,9 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'site_web', J'ai du l'enlever pour que chartit marche
-    'chartit',
-    'site_web.apps.SiteWebConfig',
+    'site_web.apps.SiteWebConfig'
 ]
 
 MIDDLEWARE = [
