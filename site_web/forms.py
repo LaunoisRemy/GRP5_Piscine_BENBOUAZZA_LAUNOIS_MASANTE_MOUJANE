@@ -9,7 +9,7 @@ class qcm(forms.Form):
                ('d','d'),)
     question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect())
 
-qcmFormSet = formset_factory(qcm, extra=4) #Création d'un TOEIC de 4 questions
+qcmFormSet = formset_factory(qcm, extra=200) #Création d'un TOEIC de 200 questions
 
 class QuestionForm(forms.ModelForm):
     class Meta:
@@ -28,4 +28,9 @@ class ScoreParPartieForm(forms.ModelForm):
 class NomToeicForm(forms.Form):
     nom = forms.CharField(label='Nom du toeic : ', required=True,widget=forms.TextInput(attrs={'required': "required"}), max_length=100 )
 
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = Eleve
+        fields = ["nom","prenom","classe","groupe"]
+    
 

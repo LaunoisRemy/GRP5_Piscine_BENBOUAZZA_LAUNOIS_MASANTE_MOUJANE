@@ -6,6 +6,9 @@ from django.db.models.functions import Exp,Cast
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from .forms import *
 from .functions import *
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login
+
 import datetime
 
 def home(request):
@@ -52,12 +55,20 @@ def repondTOEIC(request,id_Toeic):
                     userReponses[1].append(question) #On met chacune des réponses dans une liste
                 compteurReponse+=1
 
-           
+        print(userReponses)   
         score = comparaisonReponse(listeBonneReponse,userReponses)
         # Recupération de l'élève, provisoire
         # TODO Quand les comptes seront fait récupérer par rapport au compte
-        eleve = Eleve.objects.all()[0]
-        print (eleve)
+        #eleve = Eleve.objects.all()[0]
+        utilisateur = request.user
+        eleve = Eleve.objects.filter(user=utilisateur)[0]
+        
+
+        """
+        
+        print(scorePartie.is_valid())
+        print(scorePartie.errors)
+        """
         # Sauvegarde du score
         
         for ssPartie in range(0,2):
@@ -73,13 +84,11 @@ def repondTOEIC(request,id_Toeic):
             scorePartie = ScoreParPartieForm(data)
             if(scorePartie.is_valid()):
                 scorePartie.save()
-                print("yes") 
-            else:
-                print("no")
+       
 
-        print(listeBonneReponse)
-        print(userReponses)   
-        print(score)
+        #print(listeBonneReponse)
+        #print(userReponses)   
+        #print(score)
         return redirect(home)
 
     return render(request, template_name, {'formset':formset })
@@ -102,7 +111,7 @@ def creerTOEIC(request,nomToeic):
             i=0        
             for form in formset: #On récupère chacune des réponses 
                 reponse  = form.cleaned_data.get('question')
-                if(i<2):
+                if(i<100):
                     data = {
                         'id_Question' : i,
                         'id_TOEIC' : idToeic,
@@ -201,3 +210,37 @@ def espace_professeur(request):
     scoretot=ScoreParPartie.objects.values('id_TOEIC','id_SousPartie__type_Partie').annotate(
         score_type=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
     return liste(request,"Voici tout les résultats :",scoretot)
+
+
+def register(request):
+
+    if request.method == 'GET':
+        form = UserForm()
+        formUser = UserCreationForm()
+        context = { 'form' : form , 'formUser' : formUser}
+        return render(request,'registration/register.html', context)
+    elif request.method == 'POST':
+
+        form = UserForm(request.POST)
+        formUser = UserCreationForm(request.POST)
+        print(form.is_valid(),formUser.is_valid())
+        print(formUser.errors)
+        if form.is_valid() and formUser.is_valid():
+            user = formUser.save()
+            login(request, user)
+        
+            post = form.save(commit=False)
+            post.user = user
+            post.save()
+
+            username = user.username
+            password = user.password
+            user = authenticate(username=username, password=password)
+
+            return redirect(home)
+        else :
+            return redirect('espace_professeur')
+def logout_view(request):
+    logout(request)
+    return redirect(home)
+

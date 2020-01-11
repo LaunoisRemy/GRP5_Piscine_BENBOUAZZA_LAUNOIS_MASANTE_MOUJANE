@@ -7,26 +7,47 @@
         <title>Title</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-        
     </head>
     
     <body>
-        {% block nav %}
-            <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center">
-                <a class="navbar-brand" href="/">Toeic</a>
-                <ul class="nav navbar-nav">                        
-                    <!-- <li>{% block nav-home %}<a href="{% url 'index' %}">Home</a>{% endblock %}</li> -->
-                    <li class="nav-item">{% block nav-liste_Toeic %}<a class="nav-link" href="{% url 'liste_TOEIC' %}">liste des Toeic</a>{% endblock %}</li class="nav-item">
-                    <li class="nav-item">{% block nav-pageProf %}<a class="nav-link" href="{% url 'espace_professeur' %}">Page prof</a>{% endblock %}</li>                        
-                    <li class="nav-item">{% block nav-pageEleve %}<a class="nav-link" href="{% url 'liste_TOEIC' %}">liste des Toeic</a>{% endblock %}</li>
-                </ul>
-            </nav>
-        <p></p>
+        <div class="container">
 
-        {% endblock %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/">Toeic</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
+              <ul class="navbar-nav mr-auto">            
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'liste_TOEIC' %}">liste des Toeic</span></a>
+                </li>
+                {% if user.is_superuser %}
+                <li class="nav-item active">
+                    <a class="nav-link"  href="{% url 'espace_professeur' %}">Page prof</a>
+                </li>
+                {% endif %}
+
+                {% if user.is_authenticated is not True %}
+                <li class="nav-item active">
+                  <a class="nav-link"  href="{% url 'login' %}">Connexion</a>
+                </li>
+                {% else %}
+                <li class="nav-item active">
+                  <a class="nav-link"  href="{% url 'logout' %}">Deconnexion</a>
+                </li>
+                {% endif %}
+                
+                
+
+                
+              </ul>
+            </div>
+          </nav>
+        </div>
         <div class="content container">
                 {% block content %}{% endblock %}
         </div>

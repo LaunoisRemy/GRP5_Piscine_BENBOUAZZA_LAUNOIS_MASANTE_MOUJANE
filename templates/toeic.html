@@ -26,17 +26,15 @@
                     <h3>Listening</h3>
                 {% endifequal %}
 
-                {% ifequal form.prefix  " Question -2" %}       
+                {% ifequal form.prefix  " Question -99" %}       
                     <hr>
                     <h3>Reading</h3>
                 {% endifequal %}
-            <div id="c1">
-                <h4>{{ form.prefix }} :</h5>
-            </div>
-            <div id="c2">
+                <div class="test">
+                <h4>{{ form.prefix }} :</h4>
+
                 {{ form.question }}
-            </div>
-                
+                </div>
             {% endfor %}
             <input type='submit' value='submit' id="valider">
         </form>

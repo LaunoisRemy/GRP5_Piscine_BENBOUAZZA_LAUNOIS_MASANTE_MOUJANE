@@ -1,6 +1,7 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from . import views
+
 urlpatterns = [
     path('', views.home, name='index'),
     path('session', views.session),
@@ -13,5 +14,6 @@ urlpatterns = [
     path('liste_TOEIC', views.liste_TOEIC, name="liste_TOEIC"),
     path('creerTOEIC/<str:nomToeic>',views.creerTOEIC),
     path('repondTOEIC/<int:id_Toeic>',views.repondTOEIC, name="repondTOEIC"),
-
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('register', views.register, name="register" ),
 ]

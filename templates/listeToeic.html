@@ -17,10 +17,9 @@
         <form method='post'>
             {% csrf_token %}
 
-            <!-- Nom du toeic : <input type="text" name="NomToeic" required> -->
-            {{ test }}
-            <input type="submit" value='Creer TOEIC' > 
-        </form>
-    </div>
+    <!-- Nom du toeic : <input type="text" name="NomToeic" required> -->
+    {{ test }}
+    <input class="btn btn-primary" type="submit" value='Creer TOEIC' > 
+</form>
 </div>
 {% endblock %}

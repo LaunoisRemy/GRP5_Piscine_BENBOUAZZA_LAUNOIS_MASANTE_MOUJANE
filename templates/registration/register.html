@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <br>
+    <h1> Creation de compte </h1>
+    <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        {% if form.errors %}
+        <p> Il y a des erreurs dans le form</p>
+        {% endif %}
+        {{ formUser }}
+        <br>
+        {{ form }} 
+        <br>
+
+        <input type="submit" value="Creation Compte">
+    </form>
+
+
+{% endblock %}
