@@ -55,12 +55,20 @@ def repondTOEIC(request,id_Toeic):
                     userReponses[1].append(question) #On met chacune des réponses dans une liste
                 compteurReponse+=1
 
-           
+        print(userReponses)   
         score = comparaisonReponse(listeBonneReponse,userReponses)
         # Recupération de l'élève, provisoire
         # TODO Quand les comptes seront fait récupérer par rapport au compte
-        eleve = Eleve.objects.all()[0]
-        print (eleve)
+        #eleve = Eleve.objects.all()[0]
+        utilisateur = request.user
+        eleve = Eleve.objects.filter(user=utilisateur)[0]
+        
+
+        """
+        
+        print(scorePartie.is_valid())
+        print(scorePartie.errors)
+        """
         # Sauvegarde du score
         
         for ssPartie in range(0,2):
@@ -78,9 +86,9 @@ def repondTOEIC(request,id_Toeic):
                 scorePartie.save()
        
 
-        print(listeBonneReponse)
-        print(userReponses)   
-        print(score)
+        #print(listeBonneReponse)
+        #print(userReponses)   
+        #print(score)
         return redirect(home)
 
     return render(request, template_name, {'formset':formset })
