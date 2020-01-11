@@ -146,12 +146,14 @@ def filtre_note_par_partie(request):
     requete8 = user_filter.qs.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values('id_TOEIC','id_Eleve').order_by('id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
     requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values('id_TOEIC','id_Eleve').order_by('id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
-    print(requeteR)
+    print("RRREEEEEGGGUUUUEEEETTTEEEERRRRRRRR",requeteR)
   
 
     # On exprime transmet les données des queryset en liste pour être plus maniable, avec chartit problèmes pour les notes etc
     # du coup j'ai changé et utilisé highchart qui utilise les listes.
     # Certes moins efficace mais beaucoup plus maniable
+
+
 
 
     score1 = [0,0,0,0,0,0,0]
@@ -163,6 +165,31 @@ def filtre_note_par_partie(request):
         score1[j['score']]+=j['the_count'] #Pour un score on a un effectif de personne qui ont eu cette note
         moy1+=j['score']*j['the_count'] # La moyenne est la somme des points total 
         effectiftot+=j['the_count']    # sur l'effectif total
+    
+    # Ici on recup une liste des notes totales
+    notes=[0]*effectiftot
+    k=0
+    for r in requeteR :
+        notes[k]+=NOTE_R(r["sommetot"])
+        k+=1
+    k=0
+    for l in requeteL :
+        notes[k]+=NOTE_L(l["sommetot"])
+        k+=1
+    print('notes totales',notes)
+
+    #On calcul le taux de réussite
+    valide=0
+    rate=0
+    for i in range(len(notes)):
+        if notes[i]<810:
+            rate+=1
+        else: 
+            valide+=1
+    print('taux de réussite',float(valide)/effectiftot)
+    print("taux d'échec",float(rate)/effectiftot)
+
+
 
     moy1=moy1/effectiftot
     mediane1=0
@@ -177,7 +204,7 @@ def filtre_note_par_partie(request):
 
     
 
-    print("MMMMOOOOOOOOO",moy1/effectiftot)
+    print("MMMMOOOOOOOOO",moy1)
     
     score1 = json.dumps(score1)
     cat1 = json.dumps(cat1)
