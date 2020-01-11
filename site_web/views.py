@@ -10,7 +10,6 @@ from django.views.generic import TemplateView
 from .filters import SearchFilter,FiltreNoteParPartie
 from django.contrib.auth.models import User
 
-from chartit import DataPool, Chart
 
 import statistics
 import json
