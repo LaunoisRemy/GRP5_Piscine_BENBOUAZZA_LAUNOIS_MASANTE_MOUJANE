@@ -34,85 +34,88 @@ def home(request):
 Fonction qui permet de réaliser la vue lors d'un passage de TOEIC
 """
 def repondTOEIC(request,id_Toeic):
-    template_name ='toeic.html' #Nom de la page
-
-  
-    listeBonneReponse = getBonneReponse(id_Toeic)
-
-    if len(listeBonneReponse) == 0 :
-        raise Http404
-
-    if request.method == 'GET': #Pour récupérer la page
-        formset = qcmFormSet(prefix=' Question ')  
-    elif request.method == 'POST':
-
-        userReponses=([],[],[],[],[],[],[])
-        formset = qcmFormSet(request.POST,prefix=' Question ')
-
-        compteurReponse=1
-
-        if formset.is_valid():#Action de sécurité
-            for form in formset: #On récupère chacune des réponses 
-                question  = form.cleaned_data.get('question')
-                if(compteurReponse<=6):
-                    userReponses[0].append(question) #On met chacune des réponses dans une liste
-                elif(compteurReponse>=7 and compteurReponse <= 31 ):
-                    userReponses[1].append(question) #On met chacune des réponses dans une liste
-                elif(compteurReponse>=32 and compteurReponse <= 70 ):
-                    userReponses[2].append(question)
-                elif(compteurReponse>=71 and compteurReponse <= 100 ):
-                    userReponses[3].append(question)
-                elif(compteurReponse>=101 and compteurReponse <= 130 ):
-                    userReponses[4].append(question)
-                elif(compteurReponse>=131 and compteurReponse <= 146 ):
-                    userReponses[5].append(question)
-                elif(compteurReponse>=147 and compteurReponse <= 200 ):
-                    userReponses[6].append(question)
-                compteurReponse+=1
-
-        print(userReponses)   
-        score = comparaisonReponse(listeBonneReponse,userReponses)
-        # Recupération de l'élève, provisoire
-        # TODO Quand les comptes seront fait récupérer par rapport au compte
-        #eleve = Eleve.objects.all()[0]
-        utilisateur = request.user
-        eleve = Eleve.objects.filter(user=utilisateur)[0]
-        
-
-        """
-        
-        print(scorePartie.is_valid())
-        print(scorePartie.errors)
-        """
-        # Sauvegarde du score
-
-        datepassage=datetime.datetime.now()
-        print(datepassage)
-        # AJouté par Ayoub, pour qu'on ait pas des temps de passages différents pour des parties dans un même suejt
-        # On prend une date unique
-        
-        for ssPartie in range(1,len(score)+1):
-            print(ssPartie)
-            #Score a sauvegarder
-            data = {
-                'id_Eleve' : eleve.id,
-                'id_TOEIC' : id_Toeic,
-                'id_SousPartie' : ssPartie,
-                'score' : score[ssPartie-1],
-                'date_Passage' : datepassage
-            }
-            
-            scorePartie = ScoreParPartieForm(data)
-            if(scorePartie.is_valid()):
-                scorePartie.save()
-       
-
-        #print(listeBonneReponse)
-        #print(userReponses)   
-        #print(score)
+    if(request.user.is_superuser):
         return redirect(home)
+    else :
+        template_name ='toeic.html' #Nom de la page
 
-    return render(request, template_name, {'formset':formset })
+    
+        listeBonneReponse = getBonneReponse(id_Toeic)
+
+        if len(listeBonneReponse) == 0 :
+            raise Http404
+
+        if request.method == 'GET': #Pour récupérer la page
+            formset = qcmFormSet(prefix=' Question ')  
+        elif request.method == 'POST':
+
+            userReponses=([],[],[],[],[],[],[])
+            formset = qcmFormSet(request.POST,prefix=' Question ')
+
+            compteurReponse=1
+
+            if formset.is_valid():#Action de sécurité
+                for form in formset: #On récupère chacune des réponses 
+                    question  = form.cleaned_data.get('question')
+                    if(compteurReponse<=6):
+                        userReponses[0].append(question) #On met chacune des réponses dans une liste
+                    elif(compteurReponse>=7 and compteurReponse <= 31 ):
+                        userReponses[1].append(question) #On met chacune des réponses dans une liste
+                    elif(compteurReponse>=32 and compteurReponse <= 70 ):
+                        userReponses[2].append(question)
+                    elif(compteurReponse>=71 and compteurReponse <= 100 ):
+                        userReponses[3].append(question)
+                    elif(compteurReponse>=101 and compteurReponse <= 130 ):
+                        userReponses[4].append(question)
+                    elif(compteurReponse>=131 and compteurReponse <= 146 ):
+                        userReponses[5].append(question)
+                    elif(compteurReponse>=147 and compteurReponse <= 200 ):
+                        userReponses[6].append(question)
+                    compteurReponse+=1
+
+            print(userReponses)   
+            score = comparaisonReponse(listeBonneReponse,userReponses)
+            # Recupération de l'élève, provisoire
+            # TODO Quand les comptes seront fait récupérer par rapport au compte
+            #eleve = Eleve.objects.all()[0]
+            utilisateur = request.user
+            eleve = Eleve.objects.filter(user=utilisateur)[0]
+            
+
+            """
+            
+            print(scorePartie.is_valid())
+            print(scorePartie.errors)
+            """
+            # Sauvegarde du score
+
+            datepassage=datetime.datetime.now()
+            print(datepassage)
+            # AJouté par Ayoub, pour qu'on ait pas des temps de passages différents pour des parties dans un même suejt
+            # On prend une date unique
+            
+            for ssPartie in range(1,len(score)+1):
+                print(ssPartie)
+                #Score a sauvegarder
+                data = {
+                    'id_Eleve' : eleve.id,
+                    'id_TOEIC' : id_Toeic,
+                    'id_SousPartie' : ssPartie,
+                    'score' : score[ssPartie-1],
+                    'date_Passage' : datepassage
+                }
+                
+                scorePartie = ScoreParPartieForm(data)
+                if(scorePartie.is_valid()):
+                    scorePartie.save()
+        
+
+            #print(listeBonneReponse)
+            #print(userReponses)   
+            #print(score)
+            return redirect(home)
+
+        return render(request, template_name, {'formset':formset })
 
 
 def creerTOEIC(request,nomToeic):
