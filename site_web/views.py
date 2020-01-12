@@ -13,7 +13,8 @@ from django.views.generic import TemplateView
 from .filters import SearchFilter,FiltreNoteParPartie
 from django.contrib.auth.models import User
 
-import datetime
+
+from datetime import datetime
 import statistics
 import json
 # Create your views here.
@@ -86,6 +87,10 @@ def repondTOEIC(request,id_Toeic):
         print(scorePartie.errors)
         """
         # Sauvegarde du score
+
+        datepassage=datetime.datetime.now()
+        # AJouté par Ayoub, pour qu'on ait pas des temps de passages différents pour des parties dans un même suejt
+        # On prend une date unique
         
         for ssPartie in range(1,len(score)+1):
             print(ssPartie)
@@ -95,7 +100,7 @@ def repondTOEIC(request,id_Toeic):
                 'id_TOEIC' : id_Toeic,
                 'id_SousPartie' : ssPartie,
                 'score' : score[ssPartie-1],
-                'date_Passage' : datetime.datetime.now()
+                'date_Passage' : datepassage
             }
             
             scorePartie = ScoreParPartieForm(data)
@@ -210,14 +215,18 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
     # TODO verifier eleve non vide
     eleve = Eleve.objects.filter(user = request.user)[0]
     id_eleve = eleve.id
-    test = ScoreParPartie.objects.filter(id_Eleve=id_eleve)
 
+    # On recupère le nom et le prenom
+    test = list(ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_Eleve__nom','id_Eleve__prenom'))
+    nom = test[0]["id_Eleve__nom"]
+    prenom = test[0]['id_Eleve__prenom']
 
     ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
     scoretot = ScoreParPartie.objects.filter( # Query set
         id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
-        score=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_Eleve__prenom','id_SousPartie__type_Partie','score','id_TOEIC__lib_TOEIC')
+        score=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score','date_Passage')
         ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
+
 
     ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
 
@@ -227,41 +236,45 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
             i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
         else:
             i["score"]=(NOTE_R(i["score"]))
+    print("Listenoteparpartie",ListeNoteParPartie)
 
     listeR=[]
     listeL=[]
     listeTOT=[]
     Tout=[]
+    listeDate=[]
 
     #On créer la liste des notes Listening
 
-    for i in ListeNoteParPartie : 
+    for i in ListeNoteParPartie :
         if i["id_SousPartie__type_Partie"]=="L":
-            listeL.append(i)
+            listeL.append(i["score"])
+            listeDate.append(i["date_Passage"].strftime("%d-%b-%Y"))
+        else:
+            listeR.append(i["score"])
 
-    #On créer la liste des notes Reading
-
-    for i in ListeNoteParPartie : 
-        if i["id_SousPartie__type_Partie"]=="R":
-            listeR.append(i)
-
+    print('LISTER',listeR)
+    print('LISTEL',listeL)
     #Oncréer la liste des notes Total
 
     for i in range(len(listeR)):
-        scoretot=listeR[i]["score"]+listeL[i]["score"]
-        nouveauquery= {'id_TOEIC': listeR[i]["id_TOEIC"], 'id_Eleve__nom': listeR[i]["id_Eleve__nom"], 'id_SousPartie__type_Partie': 'TOT', 'score': scoretot}
-        listeTOT.append(nouveauquery)
-
+        scoretot=listeR[i]+listeL[i]
+        #nouveauquery= {'id_TOEIC': listeR[i]["id_TOEIC"], 'id_Eleve__nom': listeR[i]["id_Eleve__nom"], 'id_SousPartie__type_Partie': 'TOT', 'score': scoretot,'date_Passage':listeR[i]['date_Passage']}
+        listeTOT.append(scoretot)
+    print(listeTOT)
+    print(listeDate)
     for i in range(len(listeR)):
         Tout.append(listeR[i])
         Tout.append(listeL[i])
         Tout.append(listeTOT[i])
-    print('tTTTTTTTOUUOTUTTUTTUO()',Tout)
+    print("listeR: ",listeR,"listeTOT: ",listeTOT,"listeR: ",listeR,"listeDate: ",listeDate,"nom et prenom : ",nom,prenom)
 
-    #TODO il faudrait aussi afficher si le toeic est réussi ou non
+    #TODO Enelever les trucs qui servent plus dans cette vue
     #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
-    context = {'resultats':Tout,'nom':Tout[0]['id_Eleve__nom'],'prenom':Tout[0]['id_Eleve__prenom']}
-    print('CONNNNNNTEXTXTTTXXTT',context)
+
+
+    context = {'NoteR':json.dumps(listeR),'NoteTOT':json.dumps(listeTOT),'NoteL':json.dumps(listeL),'listeDate':json.dumps(listeDate),'nom':nom,'prenom':prenom}
+    #print('CONNNNNNTEXTXTTTXXTT',context)
     #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
     return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
     
@@ -485,6 +498,8 @@ def filtre_note_par_partie(request):
 
     parties=["Partie 1","Partie 2","Partie 3","Partie 4","Partie 5","Partie 6","Partie7"]
     moyennes=[moy1,moy2,moy3,moy4,moy5,moy6,moy7]
+
+    tauxdereussite=[100*moy1/6,100*moy2/25,100*moy3/39,100*moy4/30,100*moy5/30,100*moy6/16,100*moy7/54]
     return render(request,'espace_prof/search_user.html',{'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
 
 

@@ -3,35 +3,79 @@
 <head>
     <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
     <title>Résultats</title>
+        <!-- jQuery CDN -->
+         <script
+         src="https://code.jquery.com/jquery-1.12.4.min.js"
+         integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+         crossorigin="anonymous"></script>
+          <!-- highcharts CDN -->
+         <script src="https://code.highcharts.com/highcharts.src.js"></script>
+         <script src="https://code.highcharts.com/highcharts.js"></script>
+     
+       
+       <input type="hidden" id="NoteR" name="variable" value="{{NoteR}}">
+       <input type="hidden" id="NoteL" name="variable" value="{{NoteL}}">
+       <input type="hidden" id="listeDate" name="variable" value="{{listeDate}}">
+       <input type="hidden" id="NoteTOT" name="variable" value="{{NoteTOT}}">
 
 </head>
 <body>
     Espace de : {{nom}}  {{prenom}}<br>
     Voici vos derniers résultats : <br><br>
-    {%for item in resultats%}
-        {%if item.id_SousPartie__type_Partie == "R" %}
-        Libellé TOEIC : {{item.id_TOEIC__lib_TOEIC}}
-        <br>    Reading : {{item.score}}/495<br>
-        {%else%}     
-        {%if item.id_SousPartie__type_Partie == "L" %}
-        Listening : {{item.score}}/495 <br>
 
-        {%else%}
-        Total : {{item.score}}/990 <br>
-        Réussi : 
-
-
-        {% if item.score < 815 %}
-        oui
-        {% else %}
-        non
-
-        {%endif%}
-        <br><br>
-
-
-        {% endif %}{% endif %}
-
-    {% endfor %}
+    <div id="container" style="width:50%; height:50%px;"></div>
+    
 </body>
+
+<script>
+
+var noteR = document.getElementById("NoteR").value;
+yR = JSON.parse(noteR);
+var noteL = document.getElementById("NoteL").value;
+yL = JSON.parse(noteL);
+var noteTOT = document.getElementById("NoteTOT").value;
+yTOT = JSON.parse(noteTOT);
+var dates = document.getElementById("listeDate").value;
+xD = JSON.parse(dates);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container', {
+    chart: {
+        type: 'line'
+    },
+    title: {
+        text: 'Derniers résultats'
+    },
+    subtitle: {
+        text: 'TOEIC'
+    },
+    xAxis: {
+        categories: xD
+    },
+    yAxis: {
+        title: {
+            text: 'Score',min:0
+        }
+    },
+    plotOptions: {
+        line: {
+            dataLabels: {
+                enabled: true
+            },
+            enableMouseTracking: false
+        }
+    },
+    series: [{
+        name: 'Score partie Reading',
+        data: yR
+    }, {
+        name: 'Score partie Listening',
+        data: yL
+    }, {
+        name: 'Score total',
+        data: yTOT
+    }]
+})
+});
+</script>
 </html>
