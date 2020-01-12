@@ -70,3 +70,7 @@ class ScoreParPartie(models.Model):
             if self.score > 60:
                   return 495
             return 0
+
+class TempUrl(models.Model):
+    url_hash = models.CharField("Url", blank=False, max_length=32, unique=True)
+    expires = models.DateTimeField("Expires")
