@@ -12,9 +12,7 @@ from .fonctions_TOEIC import NOTE_L,NOTE_R
 from django.views.generic import TemplateView
 from .filters import SearchFilter,FiltreNoteParPartie
 from django.contrib.auth.models import User
-
-
-from datetime import datetime
+import datetime
 import statistics
 import json
 # Create your views here.
@@ -89,6 +87,7 @@ def repondTOEIC(request,id_Toeic):
         # Sauvegarde du score
 
         datepassage=datetime.datetime.now()
+        print(datepassage)
         # AJouté par Ayoub, pour qu'on ait pas des temps de passages différents pour des parties dans un même suejt
         # On prend une date unique
         
