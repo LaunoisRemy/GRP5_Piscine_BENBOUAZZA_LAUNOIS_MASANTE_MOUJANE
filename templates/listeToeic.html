@@ -4,8 +4,11 @@
 <h1>{{ titre }}</h1>
 
 {% for obj in liste %}
-
+{% if user.is_superuser %}
+<li>{{obj.id}}  : {{obj}}</li>
+{% else %}
 <li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
+{% endif %}
  <br/> 
  {% endfor %}
 
