@@ -22,3 +22,6 @@
 #container7 {
 	float:left;
 }
+body{
+	display: block;
+}
