@@ -33,6 +33,9 @@ class TOEIC(models.Model):
     lib_TOEIC=models.CharField(max_length=20) 
     def __str__(self):
         return "Toeic : " +self.lib_TOEIC
+class TOEICEnCours(models.Model):
+    id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic 
+    date_Debut = models.DateTimeField()
 
 class Question(models.Model):
     id_Question=models.CharField(max_length=3 )
@@ -70,7 +73,3 @@ class ScoreParPartie(models.Model):
             if self.score > 60:
                   return 495
             return 0
-
-class TempUrl(models.Model):
-    url_hash = models.CharField("Url", blank=False, max_length=32, unique=True)
-    expires = models.DateTimeField("Expires")

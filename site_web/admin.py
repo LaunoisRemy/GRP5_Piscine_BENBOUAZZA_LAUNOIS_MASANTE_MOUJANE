@@ -17,5 +17,6 @@ admin.site.register(Question)
 admin.site.register(TOEIC)
 admin.site.register(Sous_partie)
 admin.site.register(ScoreParPartie)
+admin.site.register(TOEICEnCours)
 
 

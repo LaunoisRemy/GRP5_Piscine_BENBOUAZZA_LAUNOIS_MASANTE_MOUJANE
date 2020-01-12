@@ -6,6 +6,14 @@
 {% for obj in liste %}
 {% if user.is_superuser %}
 <li>{{obj.id}}  : {{obj}}</li>
+
+    {% if obj.id not in list_idToeicEnCours %}
+    <form method='post'>
+        {% csrf_token %}
+        <button class="btn btn-primary" type="submit" name="toeic" value={{obj.id}} >Lancer TOEIC </button>
+    </form>
+    {% endif %}
+
 {% else %}
 <li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
 {% endif %}

@@ -4,7 +4,7 @@ from .models import *
 from django.db.models.functions import Exp,Cast
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from .forms import *
-from .functions import *
+from .functions import getBonneReponse,comparaisonReponse,compteurBonneRep
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.db.models import Sum,Avg,FloatField,Count
@@ -12,7 +12,7 @@ from .fonctions_TOEIC import NOTE_L,NOTE_R
 from django.views.generic import TemplateView
 from .filters import SearchFilter,FiltreNoteParPartie
 from django.contrib.auth.models import User
-import datetime
+from datetime import datetime,timedelta
 import statistics
 import json
 # Create your views here.
@@ -33,69 +33,44 @@ def home(request):
 """
 Fonction qui permet de réaliser la vue lors d'un passage de TOEIC
 """
-def repondTOEIC(request,id_Toeic):
+def repondTOEIC(request,id_TEnCours):
+    ToeicCourant = TOEICEnCours.objects.filter(id=id_TEnCours)[0]
+    print(ToeicCourant)
+    id_Toeic = ToeicCourant.id_TOEIC.id
+    print(id_Toeic)
+ 
+
     if(request.user.is_superuser):
         return redirect(home)
     else :
         template_name ='toeic.html' #Nom de la page
-
-    
         listeBonneReponse = getBonneReponse(id_Toeic)
-
         if len(listeBonneReponse) == 0 :
             raise Http404
-
         if request.method == 'GET': #Pour récupérer la page
             formset = qcmFormSet(prefix=' Question ')  
         elif request.method == 'POST':
 
-            userReponses=([],[],[],[],[],[],[])
             formset = qcmFormSet(request.POST,prefix=' Question ')
 
-            compteurReponse=1
-
             if formset.is_valid():#Action de sécurité
-                for form in formset: #On récupère chacune des réponses 
-                    question  = form.cleaned_data.get('question')
-                    if(compteurReponse<=6):
-                        userReponses[0].append(question) #On met chacune des réponses dans une liste
-                    elif(compteurReponse>=7 and compteurReponse <= 31 ):
-                        userReponses[1].append(question) #On met chacune des réponses dans une liste
-                    elif(compteurReponse>=32 and compteurReponse <= 70 ):
-                        userReponses[2].append(question)
-                    elif(compteurReponse>=71 and compteurReponse <= 100 ):
-                        userReponses[3].append(question)
-                    elif(compteurReponse>=101 and compteurReponse <= 130 ):
-                        userReponses[4].append(question)
-                    elif(compteurReponse>=131 and compteurReponse <= 146 ):
-                        userReponses[5].append(question)
-                    elif(compteurReponse>=147 and compteurReponse <= 200 ):
-                        userReponses[6].append(question)
-                    compteurReponse+=1
+                userReponses = compteurBonneRep(formset)
 
-            print(userReponses)   
+            #print(userReponses)   
             score = comparaisonReponse(listeBonneReponse,userReponses)
             # Recupération de l'élève, provisoire
             # TODO Quand les comptes seront fait récupérer par rapport au compte
             #eleve = Eleve.objects.all()[0]
             utilisateur = request.user
             eleve = Eleve.objects.filter(user=utilisateur)[0]
-            
-
-            """
-            
-            print(scorePartie.is_valid())
-            print(scorePartie.errors)
-            """
             # Sauvegarde du score
 
-            datepassage=datetime.datetime.now()
-            print(datepassage)
+            datepassage=datetime.now()
             # AJouté par Ayoub, pour qu'on ait pas des temps de passages différents pour des parties dans un même suejt
             # On prend une date unique
-            
             for ssPartie in range(1,len(score)+1):
-                print(ssPartie)
+                print(eleve)
+
                 #Score a sauvegarder
                 data = {
                     'id_Eleve' : eleve.id,
@@ -106,6 +81,9 @@ def repondTOEIC(request,id_Toeic):
                 }
                 
                 scorePartie = ScoreParPartieForm(data)
+                print(scorePartie.is_valid())
+                print(scorePartie.errors)
+
                 if(scorePartie.is_valid()):
                     scorePartie.save()
         
@@ -115,7 +93,7 @@ def repondTOEIC(request,id_Toeic):
             #print(score)
             return redirect(home)
 
-        return render(request, template_name, {'formset':formset })
+        return render(request, template_name, {'formset':formset , 'dateDebut' : ToeicCourant.date_Debut})
 
 
 def creerTOEIC(request,nomToeic):
@@ -180,6 +158,14 @@ def liste_Classe(request):
 def liste_TOEIC(request):
     listToeic =  ( Question.objects.all().values('id_TOEIC').distinct() ) 
     toeic = TOEIC.objects.filter(id__in=listToeic)
+    toeicEnCours = TOEICEnCours.objects.all()
+    
+    list_idToeicEnCours = []
+    for t in toeic :
+        for tEc in toeicEnCours :
+            print(t.id,tEc.id_TOEIC.id)
+            if(t.id==tEc.id_TOEIC.id and t.id not in list_idToeicEnCours):
+                list_idToeicEnCours.append(t.id)
     if request.method == 'GET': #Pour récupérer la page
         test = NomToeicForm(None)
         context ={
@@ -187,14 +173,30 @@ def liste_TOEIC(request):
             "liste":toeic,
             "test" : test
         }
+        context['list_idToeicEnCours']=list_idToeicEnCours
+
         return render(request,"listeToeic.html",context) 
     elif request.method == 'POST':
-        form = NomToeicForm(request.POST)
+        if('toeic' in request.POST):
+            toeic = TOEIC.objects.filter(id=request.POST['toeic'])[0]
+            print(toeic,toeic.id)
+            data = {
+                "id_TOEIC":toeic.id,
+                "date_Debut":datetime.now()
+            }
+            toeicEnCoursForm = ToeicEnCoursForm(data)
+            print(toeicEnCoursForm.is_valid())
+            print(toeicEnCoursForm.errors)
+            if(toeicEnCoursForm.is_valid()):
+                toeicEnCoursForm.save()
+            return redirect(home)
+        else : 
+            form = NomToeicForm(request.POST)
 
-        if(form.is_valid()):
-            nom=form.cleaned_data.get('nom')
-            return redirect(creerTOEIC,nom)
-        return redirect(liste_TOEIC)
+            if(form.is_valid()):
+                nom=form.cleaned_data.get('nom')
+                return redirect(creerTOEIC,nom)
+            return redirect(liste_TOEIC)
  
 
 
@@ -236,7 +238,7 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
         ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
         scoretot = ScoreParPartie.objects.filter( # Query set
             id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
-            score=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score','date_Passage')
+            score=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score','date_Passage').order_by('date_Passage')
             ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
 
 
@@ -284,8 +286,31 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
     context = {'NoteR':json.dumps(listeR),'NoteTOT':json.dumps(listeTOT),'NoteL':json.dumps(listeL),'listeDate':json.dumps(listeDate),'nomprenom':nomprenom}
         #print('CONNNNNNTEXTXTTTXXTT',context)
         #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
+    maintenant=datetime.now()
+    toeic = list(TOEICEnCours.objects.all())
+    toeicDispos=[]
+    for t in toeic:
+        date_debut = (t.date_Debut)
+        
+        finSession = date_debut + timedelta(hours=2)
+        print(estPlusGrandDate(date_debut,maintenant) ,estPlusGrandDate(maintenant,finSession) )
+        #if(estPlusGrandDate(date_debut,maintenant)  ) :
+         #   if estPlusGrandDate(maintenant,finSession):
+        toeicDispos.append(t) 
+
+    context["liste"] = toeicDispos     
+
     return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
     
+def estPlusGrandDate(date1,date2):
+    res = False
+    if( date1.year <= date2.year ) :
+        if( date1.day <= date2.day ) :
+            if(date1.hour <= date2.hour) :
+                if(date1.minute <= date2.minute):
+                    if(date1.second <= date2.second ) :
+                        res = True
+    return res 
 
 
     ### C'est ici que le professeur peut voir les statistiques sur les résultats de toeic
