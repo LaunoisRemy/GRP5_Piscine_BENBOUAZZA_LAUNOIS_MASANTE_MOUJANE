@@ -214,29 +214,8 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
     #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie','score')
     # TODO verifier eleve non vide
     eleve = Eleve.objects.filter(user = request.user)[0]
+    nomprenom=str(eleve)
     id_eleve = eleve.id
-
-    # On recupère le nom et le prenom
-    test = list(ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_Eleve__nom','id_Eleve__prenom'))
-    nom = test[0]["id_Eleve__nom"]
-    prenom = test[0]['id_Eleve__prenom']
-
-    ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
-    scoretot = ScoreParPartie.objects.filter( # Query set
-        id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
-        score=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score','date_Passage')
-        ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
-
-
-    ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
-
-    ##Ici on fait la liste qui contient les notes par partie
-    for i in ListeNoteParPartie : 
-        if i["id_SousPartie__type_Partie"]=="L":
-            i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
-        else:
-            i["score"]=(NOTE_R(i["score"]))
-    print("Listenoteparpartie",ListeNoteParPartie)
 
     listeR=[]
     listeL=[]
@@ -244,38 +223,65 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
     Tout=[]
     listeDate=[]
 
-    #On créer la liste des notes Listening
+    # On recupère le nom et le prenom
+    test = list(ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_Eleve__nom','id_Eleve__prenom'))
+    
+    if len(test)!=0:
+    
+        nom = test[0]["id_Eleve__nom"]
+        prenom = test[0]['id_Eleve__prenom']
 
-    for i in ListeNoteParPartie :
-        if i["id_SousPartie__type_Partie"]=="L":
-            listeL.append(i["score"])
-            listeDate.append(i["date_Passage"].strftime("%d-%b-%Y"))
-        else:
-            listeR.append(i["score"])
-
-    print('LISTER',listeR)
-    print('LISTEL',listeL)
-    #Oncréer la liste des notes Total
-
-    for i in range(len(listeR)):
-        scoretot=listeR[i]+listeL[i]
-        #nouveauquery= {'id_TOEIC': listeR[i]["id_TOEIC"], 'id_Eleve__nom': listeR[i]["id_Eleve__nom"], 'id_SousPartie__type_Partie': 'TOT', 'score': scoretot,'date_Passage':listeR[i]['date_Passage']}
-        listeTOT.append(scoretot)
-    print(listeTOT)
-    print(listeDate)
-    for i in range(len(listeR)):
-        Tout.append(listeR[i])
-        Tout.append(listeL[i])
-        Tout.append(listeTOT[i])
-    print("listeR: ",listeR,"listeTOT: ",listeTOT,"listeR: ",listeR,"listeDate: ",listeDate,"nom et prenom : ",nom,prenom)
-
-    #TODO Enelever les trucs qui servent plus dans cette vue
-    #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
+        ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
+        scoretot = ScoreParPartie.objects.filter( # Query set
+            id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
+            score=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score','date_Passage')
+            ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
 
 
-    context = {'NoteR':json.dumps(listeR),'NoteTOT':json.dumps(listeTOT),'NoteL':json.dumps(listeL),'listeDate':json.dumps(listeDate),'nom':nom,'prenom':prenom}
-    #print('CONNNNNNTEXTXTTTXXTT',context)
-    #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
+        ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
+
+        ##Ici on fait la liste qui contient les notes par partie
+        for i in ListeNoteParPartie : 
+            if i["id_SousPartie__type_Partie"]=="L":
+                i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
+            else:
+                i["score"]=(NOTE_R(i["score"]))
+        print("Listenoteparpartie",ListeNoteParPartie)
+
+        
+
+        #On créer la liste des notes Listening
+
+        for i in ListeNoteParPartie :
+            if i["id_SousPartie__type_Partie"]=="L":
+                listeL.append(i["score"])
+                listeDate.append(i["date_Passage"].strftime("%d-%b-%Y"))
+            else:
+                listeR.append(i["score"])
+
+        print('LISTER',listeR)
+        print('LISTEL',listeL)
+        #Oncréer la liste des notes Total
+
+        for i in range(len(listeR)):
+            scoretot=listeR[i]+listeL[i]
+            #nouveauquery= {'id_TOEIC': listeR[i]["id_TOEIC"], 'id_Eleve__nom': listeR[i]["id_Eleve__nom"], 'id_SousPartie__type_Partie': 'TOT', 'score': scoretot,'date_Passage':listeR[i]['date_Passage']}
+            listeTOT.append(scoretot)
+        print(listeTOT)
+        print(listeDate)
+        for i in range(len(listeR)):
+            Tout.append(listeR[i])
+            Tout.append(listeL[i])
+            Tout.append(listeTOT[i])
+        print("listeR: ",listeR,"listeTOT: ",listeTOT,"listeR: ",listeR,"listeDate: ",listeDate,"nom et prenom : ",nom,prenom)
+
+        #TODO Enelever les trucs qui servent plus dans cette vue
+        #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
+
+
+    context = {'NoteR':json.dumps(listeR),'NoteTOT':json.dumps(listeTOT),'NoteL':json.dumps(listeL),'listeDate':json.dumps(listeDate),'nomprenom':nomprenom}
+        #print('CONNNNNNTEXTXTTTXXTT',context)
+        #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
     return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
     
 
