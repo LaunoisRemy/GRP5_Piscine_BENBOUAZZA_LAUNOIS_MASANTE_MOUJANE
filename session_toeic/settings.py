@@ -25,7 +25,7 @@ SECRET_KEY = 'y80157iu=(=pa&s+2%n3%ow*33f*=n6%djfiu-28lrjboon60g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["annamasante.pythonanywhere.com"]
+ALLOWED_HOSTS = ["annamasante.pythonanywhere.com","127.0.0.1"]
 
 # Ajouté pour le static css
 STATICFILES_DIRS = [

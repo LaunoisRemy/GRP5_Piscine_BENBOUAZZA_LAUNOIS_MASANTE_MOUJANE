@@ -389,12 +389,14 @@ def filtre_note_par_partie(request):
     valide=0
     rate=0
     for i in range(len(notes)):
-        if notes[i]<810:
+        if notes[i]<815:
             rate+=1
         else: 
             valide+=1
-    print('taux de réussite',float(valide)/effectiftot)
-    print("taux d'échec",float(rate)/effectiftot)
+    txReussite = float(valide)/effectiftot*100
+    txEchec= 100.0-txReussite
+    print('taux de réussite',txReussite)
+    print("taux d'échec",txEchec)
 
 
 
@@ -508,7 +510,7 @@ def filtre_note_par_partie(request):
     moyennes=[moy1,moy2,moy3,moy4,moy5,moy6,moy7]
 
     tauxdereussite=[100*moy1/6,100*moy2/25,100*moy3/39,100*moy4/30,100*moy5/30,100*moy6/16,100*moy7/54]
-    return render(request,'espace_prof/search_user.html',{'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
+    return render(request,'espace_prof/search_user.html',{"txEchec":json.dumps(txEchec),"txReussite":json.dumps(txReussite),'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
 
 
 def graph1(request,user_filter):

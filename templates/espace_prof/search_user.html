@@ -32,6 +32,9 @@
    <input type="hidden" id="scoreR" name="variable" value="{{scoreR}}">
    <input type="hidden" id="catL" name="variable" value="{{catL}}">
    <input type="hidden" id="scoreL" name="variable" value="{{scoreL}}">
+   <input type="hidden" id="txEchec" name="variable" value="{{txEchec}}">
+   <input type="hidden" id="txReussite" name="variable" value="{{txReussite}}">
+
  </head>
   <form method="get">
     {{ filter.form.as_p }}
@@ -322,6 +325,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    var txR = document.getElementById("txReussite").value;
+    txReussite = JSON.parse(txR);
+    var txE = document.getElementById("txEchec").value;
+    txEchec = JSON.parse(txE);
+
+
   
     document.addEventListener('DOMContentLoaded', function () {
         var myChart = Highcharts.chart('containerPie', {
@@ -351,34 +360,11 @@ document.addEventListener('DOMContentLoaded', function () {
         name: 'Brands',
         colorByPoint: true,
         data: [{
-            name: 'Chrome',
-            y: 61.41,
-            sliced: true,
-            selected: true
+            name: 'Réussi',
+            y: txReussite
         }, {
-            name: 'Internet Explorer',
-            y: 11.84
-        }, {
-            name: 'Firefox',
-            y: 10.85
-        }, {
-            name: 'Edge',
-            y: 4.67
-        }, {
-            name: 'Safari',
-            y: 4.18
-        }, {
-            name: 'Sogou Explorer',
-            y: 1.64
-        }, {
-            name: 'Opera',
-            y: 1.6
-        }, {
-            name: 'QQ',
-            y: 1.2
-        }, {
-            name: 'Other',
-            y: 2.61
+            name: 'Raté',
+            y: txEchec
         }]
     }]
 });
