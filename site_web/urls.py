@@ -3,7 +3,7 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='index'),
+    path('home', views.home, name='index'),
     path('session', views.session),
     path('eleve/liste', views.liste_Eleve),
     path('classe/liste', views.liste_Classe),
@@ -15,7 +15,7 @@ urlpatterns = [
     path('creerTOEIC/<str:nomToeic>',views.creerTOEIC),
     path('repondTOEIC/<int:id_Toeic>',views.repondTOEIC, name="repondTOEIC"),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('register', views.register, name="register" ),
+    path('', views.register, name="register" ),
     path('espace_prof', views.search),
     path('filtre_notepp',views.filtre_note_par_partie)
 ]
