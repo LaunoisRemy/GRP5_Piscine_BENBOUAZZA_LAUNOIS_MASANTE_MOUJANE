@@ -34,6 +34,7 @@ class TOEIC(models.Model):
     def __str__(self):
         return "Toeic : " +self.lib_TOEIC
 
+
 class Question(models.Model):
     id_Question=models.CharField(max_length=3 )
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic 
