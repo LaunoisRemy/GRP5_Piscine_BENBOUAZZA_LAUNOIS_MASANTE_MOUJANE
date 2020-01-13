@@ -60,3 +60,8 @@ def compteurBonneRep(formset):
             userReponses[6].append(question)
         compteurReponse += 1
     return userReponses
+"""
+
+"""
+def estPlusGrandDate(date1,date2):
+    return date1.replace(tzinfo=None)<date2.replace(tzinfo=None)

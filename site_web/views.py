@@ -4,7 +4,7 @@ from .models import *
 from django.db.models.functions import Exp,Cast
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from .forms import *
-from .functions import getBonneReponse,comparaisonReponse,compteurBonneRep
+from .functions import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.db.models import Sum,Avg,FloatField,Count
@@ -160,12 +160,18 @@ def liste_TOEIC(request):
     toeic = TOEIC.objects.filter(id__in=listToeic)
     toeicEnCours = TOEICEnCours.objects.all()
     
+
+    maintenant=datetime.now()
+
     list_idToeicEnCours = []
     for t in toeic :
         for tEc in toeicEnCours :
-            print(t.id,tEc.id_TOEIC.id)
             if(t.id==tEc.id_TOEIC.id and t.id not in list_idToeicEnCours):
-                list_idToeicEnCours.append(t.id)
+                date_debut = (tEc.date_Debut)
+                finSession = date_debut + timedelta(hours=2)
+                if(estPlusGrandDate(date_debut,maintenant)  ) :
+                    if estPlusGrandDate(maintenant,finSession):
+                        list_idToeicEnCours.append(t.id)
     if request.method == 'GET': #Pour récupérer la page
         test = NomToeicForm(None)
         context ={
@@ -174,7 +180,6 @@ def liste_TOEIC(request):
             "test" : test
         }
         context['list_idToeicEnCours']=list_idToeicEnCours
-
         return render(request,"listeToeic.html",context) 
     elif request.method == 'POST':
         if('toeic' in request.POST):
@@ -294,23 +299,15 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
         
         finSession = date_debut + timedelta(hours=2)
         print(estPlusGrandDate(date_debut,maintenant) ,estPlusGrandDate(maintenant,finSession) )
-        #if(estPlusGrandDate(date_debut,maintenant)  ) :
-         #   if estPlusGrandDate(maintenant,finSession):
-        toeicDispos.append(t) 
+        if(estPlusGrandDate(date_debut,maintenant)  ) :
+            if estPlusGrandDate(maintenant,finSession):
+                toeicDispos.append(t) 
 
     context["liste"] = toeicDispos     
 
     return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
     
-def estPlusGrandDate(date1,date2):
-    res = False
-    if( date1.year <= date2.year ) :
-        if( date1.day <= date2.day ) :
-            if(date1.hour <= date2.hour) :
-                if(date1.minute <= date2.minute):
-                    if(date1.second <= date2.second ) :
-                        res = True
-    return res 
+
 
 
     ### C'est ici que le professeur peut voir les statistiques sur les résultats de toeic
