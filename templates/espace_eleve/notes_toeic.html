@@ -78,4 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 });
 </script>
+    {% for obj in liste %}
+    <li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
+    {% endfor %}
 </html>

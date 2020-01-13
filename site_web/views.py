@@ -12,7 +12,7 @@ from .fonctions_TOEIC import NOTE_L,NOTE_R
 from django.views.generic import TemplateView
 from .filters import SearchFilter,FiltreNoteParPartie
 from django.contrib.auth.models import User
-import datetime
+from datetime import datetime,timedelta
 import statistics
 import json
 # Create your views here.
@@ -42,79 +42,61 @@ def home(request):
 """
 Fonction qui permet de réaliser la vue lors d'un passage de TOEIC
 """
-def repondTOEIC(request,id_Toeic):
+def repondTOEIC(request,id_TEnCours):
+    ToeicCourant = TOEICEnCours.objects.filter(id=id_TEnCours)[0]
+    print(ToeicCourant)
+    id_Toeic = ToeicCourant.id_TOEIC.id
+    print(id_Toeic)
+ 
+
     if(request.user.is_superuser):
         return redirect(home)
     else :
         template_name ='toeic.html' #Nom de la page
-
-    
         listeBonneReponse = getBonneReponse(id_Toeic)
-
         if len(listeBonneReponse) == 0 :
             raise Http404
-
         if request.method == 'GET': #Pour récupérer la page
-            formset = qcmFormSet(prefix=' Question ')  
+            formset = qcmEleveFormSet(prefix=' Question ')  
         elif request.method == 'POST':
 
-            userReponses=([],[],[],[],[],[],[])
             formset = qcmFormSet(request.POST,prefix=' Question ')
-
-            compteurReponse=1
-
+        
             if formset.is_valid():#Action de sécurité
-                for form in formset: #On récupère chacune des réponses 
-                    question  = form.cleaned_data.get('question')
-                    if(compteurReponse<=6):
-                        userReponses[0].append(question) #On met chacune des réponses dans une liste
-                    elif(compteurReponse>=7 and compteurReponse <= 31 ):
-                        userReponses[1].append(question) #On met chacune des réponses dans une liste
-                    elif(compteurReponse>=32 and compteurReponse <= 70 ):
-                        userReponses[2].append(question)
-                    elif(compteurReponse>=71 and compteurReponse <= 100 ):
-                        userReponses[3].append(question)
-                    elif(compteurReponse>=101 and compteurReponse <= 130 ):
-                        userReponses[4].append(question)
-                    elif(compteurReponse>=131 and compteurReponse <= 146 ):
-                        userReponses[5].append(question)
-                    elif(compteurReponse>=147 and compteurReponse <= 200 ):
-                        userReponses[6].append(question)
-                    compteurReponse+=1
+                userReponses = compteurBonneRep(formset)
 
-            print(userReponses)   
+            #print(userReponses)   
             score = comparaisonReponse(listeBonneReponse,userReponses)
             # Recupération de l'élève, provisoire
             # TODO Quand les comptes seront fait récupérer par rapport au compte
             #eleve = Eleve.objects.all()[0]
             utilisateur = request.user
             eleve = Eleve.objects.filter(user=utilisateur)[0]
-            
-
-            """
-            
-            print(scorePartie.is_valid())
-            print(scorePartie.errors)
-            """
             # Sauvegarde du score
 
-            datepassage=datetime.datetime.now()
-            print(datepassage)
+            datepassage=datetime.now()
             # AJouté par Ayoub, pour qu'on ait pas des temps de passages différents pour des parties dans un même suejt
             # On prend une date unique
-            
             for ssPartie in range(1,len(score)+1):
+                print(eleve.id)
+                print(ToeicCourant)
                 print(ssPartie)
+                print(score[ssPartie-1])
+                print(datepassage)
+
                 #Score a sauvegarder
                 data = {
                     'id_Eleve' : eleve.id,
-                    'id_TOEIC' : id_Toeic,
+                    'id_TOEICEnCours' : ToeicCourant.id,
                     'id_SousPartie' : ssPartie,
                     'score' : score[ssPartie-1],
                     'date_Passage' : datepassage
                 }
                 
                 scorePartie = ScoreParPartieForm(data)
+                print(scorePartie.is_valid())
+                print(scorePartie.errors)
+
                 if(scorePartie.is_valid()):
                     scorePartie.save()
         
@@ -124,7 +106,7 @@ def repondTOEIC(request,id_Toeic):
             #print(score)
             return redirect(home)
 
-        return render(request, template_name, {'formset':formset })
+        return render(request, template_name, {'formset':formset , 'dateDebut' : ToeicCourant.date_Debut})
 
 
 def creerTOEIC(request,nomToeic):
@@ -159,6 +141,8 @@ def creerTOEIC(request,nomToeic):
                 elif(i>=147 and i<=200):
                     data = dataToeic(i,7,idToeic,reponse)
                 questionForm = QuestionForm(data)
+                questionForm.is_valid()
+                print(questionForm.errors)
                 questionForm.save()
                 i+=1
                 userReponses.append(question) #On met chacune des réponses dans une liste
@@ -189,6 +173,20 @@ def liste_Classe(request):
 def liste_TOEIC(request):
     listToeic =  ( Question.objects.all().values('id_TOEIC').distinct() ) 
     toeic = TOEIC.objects.filter(id__in=listToeic)
+    toeicEnCours = TOEICEnCours.objects.all()
+    
+
+    maintenant=datetime.now()
+
+    list_idToeicEnCours = []
+    for t in toeic :
+        for tEc in toeicEnCours :
+            if(t.id==tEc.id_TOEIC.id and t.id not in list_idToeicEnCours):
+                date_debut = (tEc.date_Debut)
+                finSession = date_debut + timedelta(hours=2)
+                if(estPlusGrandDate(date_debut,maintenant)  ) :
+                    if estPlusGrandDate(maintenant,finSession):
+                        list_idToeicEnCours.append(t.id)
     if request.method == 'GET': #Pour récupérer la page
         test = NomToeicForm(None)
         context ={
@@ -196,14 +194,27 @@ def liste_TOEIC(request):
             "liste":toeic,
             "test" : test
         }
+        context['list_idToeicEnCours']=list_idToeicEnCours
+        context['toeicEnCours']=toeicEnCours
         return render(request,"listeToeic.html",context) 
     elif request.method == 'POST':
-        form = NomToeicForm(request.POST)
+        if('toeic' in request.POST):
+            toeic = TOEIC.objects.filter(id=request.POST['toeic'])[0]
+            data = {
+                "id_TOEIC":toeic.id,
+                "date_Debut":datetime.now()
+            }
+            toeicEnCoursForm = ToeicEnCoursForm(data)
+            if(toeicEnCoursForm.is_valid()):
+                toeicEnCoursForm.save()
+            return redirect(home)
+        else : 
+            form = NomToeicForm(request.POST)
 
-        if(form.is_valid()):
-            nom=form.cleaned_data.get('nom')
-            return redirect(creerTOEIC,nom)
-        return redirect(liste_TOEIC)
+            if(form.is_valid()):
+                nom=form.cleaned_data.get('nom')
+                return redirect(creerTOEIC,nom)
+            return redirect(liste_TOEIC)
  
 
 
@@ -244,11 +255,11 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
 
         ### scoretot recupère le nombre de bonne réponses par toeic passé et par partie de l'élève qui a pour id id_eleve
         scoretot = ScoreParPartie.objects.filter( # Query set
-            id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie').annotate(
-            score=Sum('score')).values('id_TOEIC','id_SousPartie__type_Partie','score','date_Passage')
+            id_Eleve=id_eleve).values('id_TOEICEnCours__id_TOEIC','id_SousPartie__type_Partie').annotate(
+            score=Sum('score')).values('id_TOEICEnCours__id_TOEIC','id_SousPartie__type_Partie','score','date_Passage').order_by('date_Passage')
             ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
 
-
+        print(scoretot)
         ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
 
         ##Ici on fait la liste qui contient les notes par partie
@@ -278,13 +289,12 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
             scoretot=listeR[i]+listeL[i]
             #nouveauquery= {'id_TOEIC': listeR[i]["id_TOEIC"], 'id_Eleve__nom': listeR[i]["id_Eleve__nom"], 'id_SousPartie__type_Partie': 'TOT', 'score': scoretot,'date_Passage':listeR[i]['date_Passage']}
             listeTOT.append(scoretot)
-        print(listeTOT)
-        print(listeDate)
+
         for i in range(len(listeR)):
             Tout.append(listeR[i])
             Tout.append(listeL[i])
             Tout.append(listeTOT[i])
-        print("listeR: ",listeR,"listeTOT: ",listeTOT,"listeR: ",listeR,"listeDate: ",listeDate,"nom et prenom : ",nom,prenom)
+        #print("listeR: ",listeR,"listeTOT: ",listeTOT,"listeR: ",listeR,"listeDate: ",listeDate,"nom et prenom : ",nom,prenom)
 
         #TODO Enelever les trucs qui servent plus dans cette vue
         #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
@@ -293,14 +303,36 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
     context = {'NoteR':json.dumps(listeR),'NoteTOT':json.dumps(listeTOT),'NoteL':json.dumps(listeL),'listeDate':json.dumps(listeDate),'nomprenom':nomprenom}
         #print('CONNNNNNTEXTXTTTXXTT',context)
         #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
+    maintenant=datetime.now()
+    toeic = list(TOEICEnCours.objects.all())
+    toeicDispos=[]
+    querry_toeicPasse=ScoreParPartie.objects.all()
+    list_toeicPasse=[]
+    for  toeicPasse in querry_toeicPasse :
+        if(toeicPasse.id_TOEICEnCours not in list_toeicPasse):
+            list_toeicPasse.append(toeicPasse.id_TOEICEnCours)
+    print(list_toeicPasse)
+    for t in toeic:
+        date_debut = (t.date_Debut)
+        
+        finSession = date_debut + timedelta(hours=2)
+        #print(estPlusGrandDate(date_debut,maintenant) ,estPlusGrandDate(maintenant,finSession) )
+        if(t not in list_toeicPasse):
+            if(estPlusGrandDate(date_debut,maintenant)  ) :
+                if estPlusGrandDate(maintenant,finSession):
+                    toeicDispos.append(t) 
+
+    context["liste"] = toeicDispos     
+
     return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
     
 
 
+
     ### C'est ici que le professeur peut voir les statistiques sur les résultats de toeic
 def espace_professeur(request):
-    scoretot=ScoreParPartie.objects.values('id_TOEIC','id_SousPartie__type_Partie').annotate(
-        score_type=Sum('score')).values('id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
+    scoretot=ScoreParPartie.objects.values('id_TOEICEnCours__id_TOEIC','id_SousPartie__type_Partie').annotate(
+        score_type=Sum('score')).values('id_TOEICEnCours__id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
     return liste(request,"Voici tout les résultats :",scoretot)
 
 
@@ -330,8 +362,8 @@ def register(request):
             user = authenticate(username=username, password=password)
 
             return redirect(home)
-        else :
-            return redirect('espace_professeur')
+        else:
+            return redirect(register)
 def logout_view(request):
     logout(request)
     return redirect(home)
@@ -360,9 +392,8 @@ def filtre_note_par_partie(request):
     requete6 = user_filter.qs.filter(id_SousPartie__lib_Partie=6).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requete7 = user_filter.qs.filter(id_SousPartie__lib_Partie=7).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
     requete8 = user_filter.qs.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values('id_TOEIC','id_Eleve').order_by('id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
-    requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values('id_TOEIC','id_Eleve').order_by('id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
-    print("RRREEEEEGGGUUUUEEEETTTEEEERRRRRRRR",requeteR)
+    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values('id_TOEICEnCours__id_TOEIC','id_Eleve').order_by('id_TOEICEnCours__id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
+    requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values('id_TOEICEnCours__id_TOEIC','id_Eleve').order_by('id_TOEICEnCours__id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
   
 
     # On exprime transmet les données des queryset en liste pour être plus maniable, avec chartit problèmes pour les notes etc

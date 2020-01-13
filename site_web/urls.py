@@ -13,7 +13,7 @@ urlpatterns = [
     path('espace_professeur', views.espace_professeur, name ="espace_professeur",),
     path('liste_TOEIC', views.liste_TOEIC, name="liste_TOEIC"),
     path('creerTOEIC/<str:nomToeic>',views.creerTOEIC),
-    path('repondTOEIC/<int:id_Toeic>',views.repondTOEIC, name="repondTOEIC"),
+    path('repondTOEIC/<int:id_TEnCours>',views.repondTOEIC, name="repondTOEIC"),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', views.register, name="register" ),
     path('espace_prof', views.search),

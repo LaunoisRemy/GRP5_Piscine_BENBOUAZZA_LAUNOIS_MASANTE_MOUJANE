@@ -8,9 +8,64 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        
     </head>
 
     <body>
+        <input  type="hidden" id="heureDebut" name="variable" value="{{dateDebut.hour}}">
+        <input  type="hidden" id="minuteDebut" name="variable" value="{{dateDebut.minute}}">
+        <input  type="hidden" id="secondeDebut" name="variable" value="{{dateDebut.second}}">
+
+        {% if user.is_superuser is not True %}
+        <script>
+            var heureD = document.getElementById("heureDebut").value;
+            var minuteD = document.getElementById("minuteDebut").value;
+            var secondeD = document.getElementById("secondeDebut").value;
+            
+            dateDebut = new Date();
+            
+            dateDebut.setHours(heureD);
+            dateDebut.setMinutes(minuteD);
+            dateDebut.setSeconds(secondeD);
+            document.write(dateDebut)
+            // Set the date we're counting down to
+            var countDownDate = dateDebut;
+            countDownDate.setHours(countDownDate.getHours() +2 );
+            var now = new Date().getTime();
+
+            if (countDownDate - now < 0) {
+                location.href="/home";
+              }
+            
+            
+            // Update the count down every 1 second
+            var x = setInterval(function() {
+            
+              // Get today's date and time
+              var now = new Date().getTime();
+                
+              // Find the distance between now and the count down date
+              var distance = countDownDate - now;
+              // Time calculations for days, hours, minutes and seconds
+              var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+              var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+              // Output the result in an element with id="demo"
+              document.getElementById("demo").innerHTML =  hours + "h "
+              + minutes + "m " + seconds + "s ";
+                
+              // If the count down is over, write some text 
+              if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("demo").innerHTML = "EXPIRED";
+                document.getElementById("valider").click();
+              }
+            }, 1000);
+        </script>
+        <p id="demo"></p>
+
+        {% endif %}
         <div>
             <h1>{{ titre }}</h1>
         </div>
@@ -36,11 +91,9 @@
                 {{ form.question }}
                 </div>
             {% endfor %}
-            {% if user.is_superuser is not True %}
             <input type='submit' value='submit' id="valider">
-            {% endif %}
         </form>
-   
+        
 
     </body>
 
