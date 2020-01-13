@@ -17,6 +17,15 @@ import statistics
 import json
 # Create your views here.
 
+
+def mediane(score,effectiftot):
+        mediane1=0
+        k=0
+        while (mediane1<effectiftot/2) :
+            mediane1+=score[k]
+            k+=1
+        return k-1
+
 def home(request):
     if request.user.is_authenticated:
         context ={
@@ -400,16 +409,10 @@ def filtre_note_par_partie(request):
 
 
 
-    moy1=moy1/effectiftot
-    mediane1=0
-    i=0
-    k=0
-    print("score1",score1)
-    while (mediane1<effectiftot/2) :
-        mediane1+=score1[k]
-        k+=1
-    print(k)
-    print('mediane1',k)
+    moy1=moy1/effectiftot   
+
+    med1=mediane(score1,effectiftot)
+    print('mediane1',med1)
 
     
 
@@ -419,13 +422,17 @@ def filtre_note_par_partie(request):
     cat1 = json.dumps(cat1)
     
     score2=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    
     cat2 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25"]
     moy2=0
+    
     for j in requete2:
         score2[j['score']]+=j['the_count']
         moy2+=j['score']*j['the_count'] # La moyenne est la somme des points total 
     moy2=moy2/effectiftot
-    
+    med2=mediane(score2,effectiftot)
+    print('mediane2',med2)
+
     score2 = json.dumps(score2)
     cat2 = json.dumps(cat2)
 
@@ -436,7 +443,8 @@ def filtre_note_par_partie(request):
         score3[j['score']]+=j['the_count']
         moy3+=j['score']*j['the_count'] # La moyenne est la somme des points total 
     moy3=moy3/effectiftot
-    
+    med3=mediane(score3,effectiftot)
+    print("mediane3",med3)
     score3 = json.dumps(score3)
     cat3 = json.dumps(cat3)
 
@@ -447,7 +455,7 @@ def filtre_note_par_partie(request):
         score4[j['score']]+=j['the_count']
         moy4+=j['score']*j['the_count'] # La moyenne est la somme des points total 
     moy4=moy4/effectiftot
-    
+    med4=mediane(score4,effectiftot)
     score4 = json.dumps(score4)
     cat4 = json.dumps(cat4)
 
@@ -458,7 +466,7 @@ def filtre_note_par_partie(request):
         score5[j['score']]+=j['the_count']
         moy5+=j['score']*j['the_count'] # La moyenne est la somme des points total 
     moy5=moy5/effectiftot
-    
+    med5=mediane(score5,effectiftot)
     score5 = json.dumps(score5)
     cat5 = json.dumps(cat5)
 
@@ -469,8 +477,12 @@ def filtre_note_par_partie(request):
         score6[j['score']]+=j['the_count']
         moy6+=j['score']*j['the_count'] # La moyenne est la somme des points total 
     moy6=moy6/effectiftot
+    med6=mediane(score6,effectiftot)
+
+
     score6 = json.dumps(score6)
     cat6 = json.dumps(cat6)
+    
     
     score7=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     cat7 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54"]
@@ -479,6 +491,7 @@ def filtre_note_par_partie(request):
         score7[j['score']]+=j['the_count']
         moy7+=j['score']*j['the_count'] # La moyenne est la somme des points total 
     moy7=moy7/effectiftot
+    med7=mediane(score7,effectiftot)
     
     score7 = json.dumps(score7)
     cat7 = json.dumps(cat7)
@@ -508,9 +521,10 @@ def filtre_note_par_partie(request):
 
     parties=["Partie 1","Partie 2","Partie 3","Partie 4","Partie 5","Partie 6","Partie7"]
     moyennes=[moy1,moy2,moy3,moy4,moy5,moy6,moy7]
+    tauxRParPartie=[100*med1/6,100*med2/25,100*med3/39,100*med4/30,100*med5/30,100*med6/16,100*med7/54]
 
     tauxdereussite=[100*moy1/6,100*moy2/25,100*moy3/39,100*moy4/30,100*moy5/30,100*moy6/16,100*moy7/54]
-    return render(request,'espace_prof/search_user.html',{"txEchec":json.dumps(txEchec),"txReussite":json.dumps(txReussite),'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
+    return render(request,'espace_prof/search_user.html',{"tauxRParPartie":json.dumps(tauxdereussite),"txEchec":json.dumps(txEchec),"txReussite":json.dumps(txReussite),'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
 
 
 def graph1(request,user_filter):
