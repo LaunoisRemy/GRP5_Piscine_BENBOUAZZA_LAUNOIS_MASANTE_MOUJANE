@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+{% extends 'base.html' %}
+
+{% block head %}
+     <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
     <title>Résultats</title>
         <!-- jQuery CDN -->
          <script
@@ -18,18 +18,19 @@
        <input type="hidden" id="listeDate" name="variable" value="{{listeDate}}">
        <input type="hidden" id="NoteTOT" name="variable" value="{{NoteTOT}}">
 
-</head>
-<body>
+{% endblock %}
+{% block content %}
+
     Espace de : {{nomprenom}}<br>
     Voici vos derniers résultats : <br><br>
 
     <div id="container" style="width:50%; height:50%px;"></div>
     
-</body>
+
 
 <script>
 
-var noteR = document.getElementById("NoteR").value;
+var noteR = "{{NoteR}}";
 yR = JSON.parse(noteR);
 var noteL = document.getElementById("NoteL").value;
 yL = JSON.parse(noteL);
@@ -81,4 +82,4 @@ document.addEventListener('DOMContentLoaded', function () {
     {% for obj in liste %}
     <li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
     {% endfor %}
-</html>
+{% endblock %}
