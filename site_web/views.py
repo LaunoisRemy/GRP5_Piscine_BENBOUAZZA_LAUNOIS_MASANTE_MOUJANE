@@ -402,24 +402,9 @@ def filtre_note_par_partie(request):
             rate+=1
         else: 
             valide+=1
-    txReussite = float(valide)/effectiftot*100
-    txEchec= 100.0-txReussite
-    print('taux de réussite',txReussite)
-    print("taux d'échec",txEchec)
-
-
-
-    moy1=moy1/effectiftot   
-
-    med1=mediane(score1,effectiftot)
-    print('mediane1',med1)
-
+   
     
-
-    print("MMMMOOOOOOOOO",moy1)
     
-    score1 = json.dumps(score1)
-    cat1 = json.dumps(cat1)
     
     score2=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     
@@ -429,12 +414,6 @@ def filtre_note_par_partie(request):
     for j in requete2:
         score2[j['score']]+=j['the_count']
         moy2+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    moy2=moy2/effectiftot
-    med2=mediane(score2,effectiftot)
-    print('mediane2',med2)
-
-    score2 = json.dumps(score2)
-    cat2 = json.dumps(cat2)
 
     score3=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     cat3 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
@@ -442,60 +421,35 @@ def filtre_note_par_partie(request):
     for j in requete3:
         score3[j['score']]+=j['the_count']
         moy3+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    moy3=moy3/effectiftot
-    med3=mediane(score3,effectiftot)
-    print("mediane3",med3)
-    score3 = json.dumps(score3)
-    cat3 = json.dumps(cat3)
-
+    
     score4=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     cat4 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
     moy4=0
     for j in requete4:
         score4[j['score']]+=j['the_count']
         moy4+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    moy4=moy4/effectiftot
-    med4=mediane(score4,effectiftot)
-    score4 = json.dumps(score4)
-    cat4 = json.dumps(cat4)
-
+    
     score5=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     cat5 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
     moy5=0
     for j in requete5:
         score5[j['score']]+=j['the_count']
         moy5+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    moy5=moy5/effectiftot
-    med5=mediane(score5,effectiftot)
-    score5 = json.dumps(score5)
-    cat5 = json.dumps(cat5)
-
+    
     score6 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     cat6 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]
     moy6=0
     for j in requete6:
         score6[j['score']]+=j['the_count']
         moy6+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    moy6=moy6/effectiftot
-    med6=mediane(score6,effectiftot)
-
-
-    score6 = json.dumps(score6)
-    cat6 = json.dumps(cat6)
-    
-    
+      
     score7=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     cat7 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54"]
     moy7 = 0
     for j in requete7:
         score7[j['score']]+=j['the_count']
         moy7+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    moy7=moy7/effectiftot
-    med7=mediane(score7,effectiftot)
-    
-    score7 = json.dumps(score7)
-    cat7 = json.dumps(cat7)
-    
+
     scoreR=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     catR = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"]
     for j in requeteR:
@@ -519,6 +473,74 @@ def filtre_note_par_partie(request):
     R=[5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 65, 70, 80, 85, 90, 95, 100, 110, 115, 120, 125, 130, 140, 145, 150, 160, 165, 170, 175, 180, 190, 195, 200, 210, 215, 220, 225, 230, 235, 240, 250, 255, 260, 265, 270, 280, 285, 290, 300, 305, 310, 320, 325, 330, 335, 340, 350, 355, 360, 365, 370, 380, 385, 390, 395, 400, 405, 410, 415, 420, 425, 430, 435, 445, 450, 455, 465, 470, 480, 485, 490, 495, 495, 495, 495]
     L=[5, 5, 5, 5, 5, 5, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 115, 120, 125, 130, 135, 140, 145, 150, 160, 165, 170, 175, 180, 185, 190, 195, 200, 210, 215, 220, 230, 240, 245, 250, 255, 260, 270, 275, 280, 290, 295, 300, 310, 315, 320, 325, 330, 340, 345, 350, 360, 365, 370, 380, 385, 390, 395, 400, 405, 410, 420, 425, 430, 440, 445, 450, 460, 465, 470, 475, 480, 485, 490, 495, 495, 495, 495, 495, 495, 495, 495, 495, 495, 495]
 
+    if effectiftot>0:
+        ## On calcul les moyennes par parties
+
+        moy1=moy1/effectiftot   
+        moy2=moy2/effectiftot
+        moy3=moy3/effectiftot
+        moy4=moy4/effectiftot
+        moy5=moy5/effectiftot
+        moy6=moy6/effectiftot
+        moy7=moy7/effectiftot
+
+        ## On calcul les medianes par parties
+        med1=mediane(score1,effectiftot)
+        med2=mediane(score2,effectiftot)
+        med3=mediane(score3,effectiftot)
+        med4=mediane(score4,effectiftot)
+        med5=mediane(score5,effectiftot)
+        med6=mediane(score6,effectiftot)
+        med7=mediane(score7,effectiftot)
+
+        ## Calcul du taux de réussite total
+
+        txReussite = float(valide)/effectiftot*100
+        txEchec= 100.0-txReussite
+    else:
+        # On calcul les moyennes par parties
+
+        moy1=0
+        moy2=0
+        moy3=0
+        moy4=0
+        moy5=0
+        moy6=0
+        moy7=0
+
+        ## On calcul les medianes par parties
+        med1=0
+        med2=0
+        med3=0
+        med4=0
+        med5=0
+        med6=0
+        med7=0
+
+        ## Calcul du taux de réussite total
+
+        txReussite =0
+        txEchec= 0
+
+    score1 = json.dumps(score1)
+    cat1 = json.dumps(cat1)
+    score2 = json.dumps(score2)
+    cat2 = json.dumps(cat2)
+    score3 = json.dumps(score3)
+    cat3 = json.dumps(cat3)
+    score4 = json.dumps(score4)
+    cat4 = json.dumps(cat4)
+    score5 = json.dumps(score5)
+    cat5 = json.dumps(cat5)
+    score6 = json.dumps(score6)
+    cat6 = json.dumps(cat6)
+    score7 = json.dumps(score7)
+    cat7 = json.dumps(cat7)
+
+
+
+
+    
     parties=["Partie 1","Partie 2","Partie 3","Partie 4","Partie 5","Partie 6","Partie7"]
     moyennes=[moy1,moy2,moy3,moy4,moy5,moy6,moy7]
     tauxRParPartie=[100*med1/6,100*med2/25,100*med3/39,100*med4/30,100*med5/30,100*med6/16,100*med7/54]
