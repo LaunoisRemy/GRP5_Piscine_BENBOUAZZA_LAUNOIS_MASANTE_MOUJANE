@@ -7,9 +7,16 @@ class qcm(forms.Form):
                ('b','b'),
                ('c','c'),
                ('d','d'),)
-    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('d','d'))
+    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('b','b'))
+class qcmEleve(forms.Form):
+    CHOICES = (('a','a'),
+               ('b','b'),
+               ('c','c'),
+               ('d','d'),)
+    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('b','b'))
 
 qcmFormSet = formset_factory(qcm, extra=200) #Création d'un TOEIC de 200 questions
+qcmEleveFormSet = formset_factory(qcmEleve, extra=200) #Création d'un TOEIC de 200 questions
 
 class QuestionForm(forms.ModelForm):
     class Meta:

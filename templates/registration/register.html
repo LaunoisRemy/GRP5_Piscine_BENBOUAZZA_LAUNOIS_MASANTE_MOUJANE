@@ -1,10 +1,13 @@
 
 {% block content %}
     <br>
+    {% if form.errors %}
+    <p>Erreur de crétion compte</p>
+    {% endif %}
     <h1> Creation de compte </h1>
     <form method="post" action="{% url 'register' %}">
         {% csrf_token %}
-        {% if form.errors %}
+        {% if form.error %}
         <p> Il y a des erreurs dans le form</p>
         {% endif %}
         {{ formUser }}
