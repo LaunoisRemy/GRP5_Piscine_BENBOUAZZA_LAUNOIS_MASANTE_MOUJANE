@@ -1,0 +1,488 @@
+
+{% load static %}
+<html lang="en">
+
+  <head>
+    <!-- jQuery CDN -->
+     <script
+     src="https://code.jquery.com/jquery-1.12.4.min.js"
+     integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+     crossorigin="anonymous"></script>
+      <!-- highcharts CDN -->
+     <script src="https://code.highcharts.com/highcharts.src.js"></script>
+     <script src="https://code.highcharts.com/highcharts.js"></script>
+     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+ 
+   
+   <input type="hidden" id="cat1" name="variable" value="{{cat1}}">
+   <input type="hidden" id="score1" name="variable" value="{{score1}}">
+   <input type="hidden" id="cat2" name="variable" value="{{cat2}}">
+   <input type="hidden" id="score2" name="variable" value="{{score2}}">
+   <input type="hidden" id="cat3" name="variable" value="{{cat3}}">
+   <input type="hidden" id="score3" name="variable" value="{{score3}}">
+   <input type="hidden" id="cat4" name="variable" value="{{cat4}}">
+   <input type="hidden" id="score4" name="variable" value="{{score4}}">
+   <input type="hidden" id="cat5" name="variable" value="{{cat5}}">
+   <input type="hidden" id="score5" name="variable" value="{{score5}}">
+   <input type="hidden" id="cat6" name="variable" value="{{cat6}}">
+   <input type="hidden" id="score6" name="variable" value="{{score6}}">
+   <input type="hidden" id="cat7" name="variable" value="{{cat7}}">
+   <input type="hidden" id="score7" name="variable" value="{{score7}}">
+   <input type="hidden" id="catR" name="variable" value="{{catR}}">
+   <input type="hidden" id="scoreR" name="variable" value="{{scoreR}}">
+   <input type="hidden" id="catL" name="variable" value="{{catL}}">
+   <input type="hidden" id="scoreL" name="variable" value="{{scoreL}}">
+   <input type="hidden" id="txEchec" name="variable" value="{{txEchec}}">
+   <input type="hidden" id="txReussite" name="variable" value="{{txReussite}}">
+   <input type="hidden" id="tauxRParPartie" name="variable" value="{{tauxRParPartie}}">
+
+ </head>
+  <form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Search</button>
+  </form>
+  
+
+  <div1>
+    {% block graphes %}
+
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<body>
+    <h1>Bonnes réponses par sous partie (1,2,3, ...)</h1>
+
+    <div id="container1" style="width:25%; height:25%px;"></div>
+    <div id="container2" style="width:25%; height:25%px;"></div>
+    <div id="container3" style="width:25%; height:25%px;"></div>
+    <div id="container4" style="width:25%; height:33%px;"></div>
+    <div id="container5" style="width:25%; height:33%px;"></div>
+    <div id="container6" style="width:25%; height:33%px;"></div>
+    <div id="container7" style="width:25%; height:33%px;"></div>
+
+    <h2>Bonnes réponses par partie LISTENING/READING</h2>
+
+    <div id="containerR" style="width:50%; height:400px;"></div>
+    <div id="containerL" style="width:50%; height:400px;"></div>
+    <div id="containerPie" style="width:25%; height:33%px;"></div>
+    <div id="containerSpider" style="width:25%; height:33%px;"></div>
+
+
+
+    
+
+</body>
+
+<script>
+
+var cat1 = document.getElementById("cat1").value;
+x1 = JSON.parse(cat1);
+var score1 = document.getElementById("score1").value;
+y1 = JSON.parse(score1);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container1', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie 1'
+            },
+            xAxis: {
+                categories: x1,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                }},
+                yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+           
+            series: [{
+                name: 'Effectif',
+                data: y1     
+            }]
+        });
+    });
+
+var cat2 = document.getElementById("cat2").value;
+x2 = JSON.parse(cat2);
+var score2 = document.getElementById("score2").value;
+y2 = JSON.parse(score2);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container2', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie 2'
+            },
+            xAxis: {
+                categories: x2,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            series: [{
+                name: 'Effectif',
+                data: y2    
+            }]
+        });
+    });
+
+var cat3 = document.getElementById("cat3").value;
+x3 = JSON.parse(cat3);
+var score3 = document.getElementById("score3").value;
+y3 = JSON.parse(score3);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container3', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie 3'
+            },
+            xAxis: {
+                categories: x3,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                }
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            series: [{
+                name: 'Effectif',
+                data: y3    
+            }]
+        });
+    });
+
+var cat4 = document.getElementById("cat4").value;
+x4 = JSON.parse(cat4);
+var score4 = document.getElementById("score4").value;
+y4 = JSON.parse(score4);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container4', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie 4'
+            },
+            xAxis: {
+                categories: x4,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                }
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+           
+            series: [{
+                name: 'Effectif',
+                data: y4     
+            }]
+        });
+    });
+
+var cat5 = document.getElementById("cat5").value;
+x5 = JSON.parse(cat5);
+var score5 = document.getElementById("score5").value;
+y5 = JSON.parse(score5);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container5', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie 5'
+            },
+            xAxis: {
+                categories: x5,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                }
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+           
+            series: [{
+                name: 'Effectif',
+                data: y5     
+            }]
+        });
+    });
+
+var cat6 = document.getElementById("cat6").value;
+x6 = JSON.parse(cat6);
+var score6 = document.getElementById("score6").value;
+y6 = JSON.parse(score6);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container6', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie 6'
+            },
+            xAxis: {
+                categories: x6,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                }
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            
+            series: [{
+                name: 'Effectif',
+                data: y6     
+            }]
+        });
+    });
+
+
+var cat7 = document.getElementById("cat7").value;
+x7 = JSON.parse(cat7);
+var score7 = document.getElementById("score7").value;
+y7 = JSON.parse(score7);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('container7', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie 7'
+            },
+            xAxis: {
+                categories: x7,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                }
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+           
+            series: [{
+                name: 'Effectif',
+                data: y7     
+            }]
+        });
+    });
+
+var catR = document.getElementById("catR").value;
+xR = JSON.parse(catR);
+var scoreR = document.getElementById("scoreR").value;
+yR = JSON.parse(scoreR);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('containerR', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie R'
+            },
+            xAxis: {
+                categories: xR
+                ,title: {
+                    text: 'Nombre de bonnes réponses'
+                }
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            
+            series: [{
+                name: 'Effectif',
+                data: yR     
+            }]
+        });
+    });
+
+var catL = document.getElementById("catL").value;
+xL = JSON.parse(catL);
+var scoreL = document.getElementById("scoreL").value;
+yL = JSON.parse(scoreL);
+
+document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('containerL', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Bonnes réponses partie L'
+            },
+            xAxis: {
+                categories: xL,
+                title: {
+                    text: 'Nombre de bonnes réponses'
+                }
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            
+            series: [{
+                name: 'Effectif',
+                data: yL     
+            }]
+        });
+    });
+
+    var txR = document.getElementById("txReussite").value;
+    txReussite = JSON.parse(txR);
+    var txE = document.getElementById("txEchec").value;
+    txEchec = JSON.parse(txE);
+
+
+  
+    document.addEventListener('DOMContentLoaded', function () {
+        var myChart = Highcharts.chart('containerPie', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: 'Taux de réussite'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            }
+        }
+    },
+    series: [{
+        name: 'Taux',
+        colorByPoint: true,
+        data: [{
+            name: 'Réussi',
+            y: txReussite
+        }, {
+            name: 'Raté',
+            y: txEchec
+        }]
+    }]
+});
+
+var tauxRParPartie = document.getElementById("tauxRParPartie").value;
+TPP = JSON.parse(tauxRParPartie);
+var tauxMRParPartie = document.getElementById("tauxMRParPartie").value;
+TMPP = JSON.parse(tauxMRParPartie);
+
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var myChart =  Highcharts.chart('containerSpider', {
+
+chart: {
+    polar: true,
+    type: 'line'
+},
+
+accessibility: {
+  
+},
+
+title: {
+    text: 'Taux de réussite par partie',
+    x: 0
+},
+
+pane: {
+    size: '80%'
+},
+
+xAxis: {
+    categories: ['Partie 1', 'Partie 2', 'Partie 3', 'Partie 4',
+        'Partie 5', 'Partie 6','Partie 7'],
+    tickmarkPlacement: 'on',
+    lineWidth: 0
+},
+
+yAxis: {
+    gridLineInterpolation: 'polygon',
+    lineWidth: 0,
+    min: 0
+},
+
+tooltip: {
+    shared: true,
+    pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}%</b><br/>'
+},
+
+legend: {
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+series: [{
+    name: 'Taux de réussite',
+    data: TPP,
+    pointPlacement: 'on'
+},
+{
+    name: 'Taux de médian',
+    data: TPP,
+    pointPlacement: 'on'
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                align: 'center',
+                verticalAlign: 'bottom'
+            },
+            pane: {
+                size: '70%'
+            }
+        }
+    }]
+}
+
+});
+    });
+
+</script>
+</html>
+
+{% endblock %}
+    
+  </div1>

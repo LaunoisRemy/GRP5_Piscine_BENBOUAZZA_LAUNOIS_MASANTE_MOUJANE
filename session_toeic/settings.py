@@ -25,7 +25,13 @@ SECRET_KEY = 'y80157iu=(=pa&s+2%n3%ow*33f*=n6%djfiu-28lrjboon60g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["annamasante.pythonanywhere.com","127.0.0.1"]
+
+# Ajouté pour le static css
+STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'statics'),
+   ]
+STATIC_URL = '/static/'
 
 
 # Application definition
@@ -38,9 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'site_web',
-    'crispy_forms',
+    'crispy_forms'
 ]
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -122,5 +130,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/'
