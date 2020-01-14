@@ -4,6 +4,7 @@
 .login+html,body{
 background-image: url('https://admin.aifcc.com/images/catalogue/produit/1499679118-toeic-zoom.jpg');
 background-repeat: no-repeat;
+backdrop-filter: blur(4px);
 background-position: center;
 height: 100%;
 font-family: 'Numans', sans-serif;
