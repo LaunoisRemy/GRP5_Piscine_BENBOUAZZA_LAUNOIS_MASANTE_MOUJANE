@@ -5,7 +5,6 @@ from django.db.models.functions import Exp,Cast
 from .fonctions_TOEIC import NOTE_L,NOTE_R
 from .forms import *
 from .functions import *
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.db.models import Sum,Avg,FloatField,Count
 from .fonctions_TOEIC import NOTE_L,NOTE_R
@@ -337,33 +336,37 @@ def espace_professeur(request):
 
 
 def register(request):
+    if(request.user.is_authenticated):
+        return redirect(home)
+    else:
+        if request.method == 'GET':
+            form = UserForm()
+            formUser = UserCreationForm()
+            context = { 'form' : form , 'formUser' : formUser}
+            return render(request,'registration/register.html', context)
+        elif request.method == 'POST':
 
-    if request.method == 'GET':
-        form = UserForm()
-        formUser = UserCreationForm()
-        context = { 'form' : form , 'formUser' : formUser}
-        return render(request,'registration/register.html', context)
-    elif request.method == 'POST':
+            form = UserForm(request.POST)
+            formUser = UserCreationForm(request.POST)
+            print(form.is_valid())
+            print(form.errors)
+            print(form.is_valid())
+            print(formUser.errors)
+            if form.is_valid() and formUser.is_valid():
+                user = formUser.save()
+                login(request, user)
+            
+                post = form.save(commit=False)
+                post.user = user
+                post.save()
 
-        form = UserForm(request.POST)
-        formUser = UserCreationForm(request.POST)
-        print(form.is_valid(),formUser.is_valid())
-        print(formUser.errors)
-        if form.is_valid() and formUser.is_valid():
-            user = formUser.save()
-            login(request, user)
-        
-            post = form.save(commit=False)
-            post.user = user
-            post.save()
+                username = user.username
+                password = user.password
+                user = authenticate(username=username, password=password)
 
-            username = user.username
-            password = user.password
-            user = authenticate(username=username, password=password)
-
-            return redirect(home)
-        else:
-            return redirect(register)
+                return redirect(home)
+            else:
+                return redirect(register)
 def logout_view(request):
     logout(request)
     return redirect(home)
