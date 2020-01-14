@@ -13,10 +13,9 @@
          <script src="https://code.highcharts.com/highcharts.js"></script>
      
        
-       <input type="hidden" id="NoteR" name="variable" value="{{NoteR}}">
-       <input type="hidden" id="NoteL" name="variable" value="{{NoteL}}">
+
        <input type="hidden" id="listeDate" name="variable" value="{{listeDate}}">
-       <input type="hidden" id="NoteTOT" name="variable" value="{{NoteTOT}}">
+ 
 
 {% endblock %}
 {% block content %}
@@ -32,9 +31,9 @@
 
 var noteR = "{{NoteR}}";
 yR = JSON.parse(noteR);
-var noteL = document.getElementById("NoteL").value;
+var noteL = "{{NoteL}}";
 yL = JSON.parse(noteL);
-var noteTOT = document.getElementById("NoteTOT").value;
+var noteTOT = "{{NoteTOT}}";
 yTOT = JSON.parse(noteTOT);
 var dates = document.getElementById("listeDate").value;
 xD = JSON.parse(dates);
