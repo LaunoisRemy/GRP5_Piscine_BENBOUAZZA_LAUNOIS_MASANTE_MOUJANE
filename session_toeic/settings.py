@@ -25,7 +25,7 @@ SECRET_KEY = 'y80157iu=(=pa&s+2%n3%ow*33f*=n6%djfiu-28lrjboon60g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["annamasante.pythonanywhere.com"]
+ALLOWED_HOSTS = ["annamasante.pythonanywhere.com","127.0.0.1"]
 
 # Ajouté pour le static css
 STATICFILES_DIRS = [
@@ -133,3 +133,9 @@ STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = '/home'
 LOGOUT_REDIRECT_URL = '/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tcspprtpscn'#os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = 'AaAr.admin1234'#os.environ.get('EMAIL_PASS')

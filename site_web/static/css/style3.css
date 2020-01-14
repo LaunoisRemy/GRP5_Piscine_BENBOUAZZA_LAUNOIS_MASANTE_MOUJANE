@@ -103,3 +103,9 @@ h3{
 label{
     margin-left: 10px;
 }
+.form-groupe{
+    width: 100px;
+}
+input{
+    size: 10px;
+}

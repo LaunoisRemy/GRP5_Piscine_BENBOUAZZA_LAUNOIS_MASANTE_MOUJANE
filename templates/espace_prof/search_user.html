@@ -1,16 +1,15 @@
-
+{% extends "base.html" %}
 {% load static %}
-<html lang="en">
 
-  <head>
+
+  {% block head %}
     <!-- jQuery CDN -->
      <script
      src="https://code.jquery.com/jquery-1.12.4.min.js"
      integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
      crossorigin="anonymous"></script>
       <!-- highcharts CDN -->
-     <script src="https://code.highcharts.com/highcharts.src.js"></script>
-     <script src="https://code.highcharts.com/highcharts.js"></script>
+  
      <link rel="stylesheet" href="{% static 'css/blog.css' %}">
  
    
@@ -32,34 +31,54 @@
    <input type="hidden" id="scoreR" name="variable" value="{{scoreR}}">
    <input type="hidden" id="catL" name="variable" value="{{catL}}">
    <input type="hidden" id="scoreL" name="variable" value="{{scoreL}}">
- </head>
-  <form method="get">
+   <input type="hidden" id="txEchec" name="variable" value="{{txEchec}}">
+   <input type="hidden" id="txReussite" name="variable" value="{{txReussite}}">
+   <input type="hidden" id="tauxRParPartie" name="variable" value="{{tauxRParPartie}}">
+   <input type="hidden" id="tauxMRParPartie" name="variable" value="{{tauxMRParPartie}}">
+
+ {% endblock %}
+
+ {% block content %}
+ <div class="filtre">
+     <form method="get">
     {{ filter.form.as_p }}
-    <button type="submit">Search</button>
-  </form>
+</div>
   
+    <button class="btn btn-primary" type="submit">Search</button>
+  </form>
 
-  <div1>
-    {% block graphes %}
-
-   
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
 <body>
-    <h1>Bonnes réponses par sous partie (1,2,3, ...)</h1>
 
+    <h1 class="title">Taux de réussite</h1>
+    <br><br>
+
+    <div id="containerPie" style="width:50%; height:33%px;"></div>
+    <div id="containerSpider" style="width:50%; height:33%px;"></div>
+
+    <br><br>
+    <h1 class="title">Bonnes réponses par sous partie</h1>
+    <br><br>
+  
     <div id="container1" style="width:25%; height:25%px;"></div>
     <div id="container2" style="width:25%; height:25%px;"></div>
-    <div id="container3" style="width:25%; height:25%px;"></div>
     <div id="container4" style="width:25%; height:33%px;"></div>
+    <div id="container3" style="width:25%; height:25%px;"></div>
     <div id="container5" style="width:25%; height:33%px;"></div>
     <div id="container6" style="width:25%; height:33%px;"></div>
     <div id="container7" style="width:25%; height:33%px;"></div>
 
-    <h2>Bonnes réponses par partie LISTENING/READING</h2>
+    <br><br>
+
+    <h1 class="title">Reading/Listening</h1>
+    <br><br>
 
     <div id="containerR" style="width:50%; height:400px;"></div>
     <div id="containerL" style="width:50%; height:400px;"></div>
-    <div id="containerPie" style="width:25%; height:33%px;"></div>
+    
 
 
 
@@ -80,18 +99,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 1'
+                text: 'Partie 1'
             },
             xAxis: {
-                categories: x1
-                        },
-            yAxis: {
+                categories: x1,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
+                }},
+                yAxis: {
+                    title: {text : " "}
                 }
-            },
+                        ,
+           
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: y1     
             }]
         });
@@ -108,18 +129,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 2'
+                text: 'Partie 2'
             },
             xAxis: {
-                categories: x2
-                        },
-            yAxis: {
+                categories: x2,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
+                },
+                        },
+                        yAxis: {
+                    title: {text : " "}
                 }
-            },
+                        ,
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: y2    
             }]
         });
@@ -136,18 +159,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 3'
+                text: 'Partie 3'
             },
             xAxis: {
-                categories: x3
-                        },
-            yAxis: {
+                categories: x3,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
                 }
-            },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: y3    
             }]
         });
@@ -164,18 +189,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 4'
+                text: 'Partie 4'
             },
             xAxis: {
-                categories: x4
-                        },
-            yAxis: {
+                categories: x4,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
                 }
-            },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+           
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: y4     
             }]
         });
@@ -192,18 +220,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 5'
+                text: 'Partie 5'
             },
             xAxis: {
-                categories: x5
-                        },
-            yAxis: {
+                categories: x5,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
                 }
-            },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+           
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: y5     
             }]
         });
@@ -220,18 +251,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 6'
+                text: 'Partie 6'
             },
             xAxis: {
-                categories: x6
-                        },
-            yAxis: {
+                categories: x6,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
                 }
-            },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: y6     
             }]
         });
@@ -249,18 +283,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 7'
+                text: 'Partie 7'
             },
             xAxis: {
-                categories: x7
-                        },
-            yAxis: {
+                categories: x7,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
                 }
-            },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+           
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: y7     
             }]
         });
@@ -277,18 +314,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie R'
+                text: 'Partie R'
             },
             xAxis: {
                 categories: xR
-                        },
-            yAxis: {
-                title: {
-                    text: 'Fruit eaten'
+                ,title: {
+                    text: 'Nombre de bonnes réponses'
                 }
-            },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: yR     
             }]
         });
@@ -305,22 +345,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie L'
+                text: 'Partie L'
             },
             xAxis: {
-                categories: xL
-                        },
-            yAxis: {
+                categories: xL,
                 title: {
-                    text: 'Fruit eaten'
+                    text: 'Nombre de bonnes réponses'
                 }
-            },
+                        },
+                        yAxis: {
+                    title: {text : " "}
+                }
+                        ,
+            
             series: [{
-                name: 'Occurences',
+                name: 'Effectif',
                 data: yL     
             }]
         });
     });
+
+    var txR = document.getElementById("txReussite").value;
+    txReussite = JSON.parse(txR);
+    var txE = document.getElementById("txEchec").value;
+    txEchec = JSON.parse(txE);
+
 
   
     document.addEventListener('DOMContentLoaded', function () {
@@ -332,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'pie'
     },
     title: {
-        text: 'Browser market shares in January, 2018'
+        text: 'Taux de réussite'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -348,45 +397,100 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     },
     series: [{
-        name: 'Brands',
+        name: 'Taux',
         colorByPoint: true,
         data: [{
-            name: 'Chrome',
-            y: 61.41,
-            sliced: true,
-            selected: true
+            name: 'Réussi',
+            y: txReussite
         }, {
-            name: 'Internet Explorer',
-            y: 11.84
-        }, {
-            name: 'Firefox',
-            y: 10.85
-        }, {
-            name: 'Edge',
-            y: 4.67
-        }, {
-            name: 'Safari',
-            y: 4.18
-        }, {
-            name: 'Sogou Explorer',
-            y: 1.64
-        }, {
-            name: 'Opera',
-            y: 1.6
-        }, {
-            name: 'QQ',
-            y: 1.2
-        }, {
-            name: 'Other',
-            y: 2.61
+            name: 'Raté',
+            y: txEchec
         }]
     }]
+});
+
+var tauxRParPartie = document.getElementById("tauxRParPartie").value;
+TPP = JSON.parse(tauxRParPartie);
+var tauxMRParPartie = document.getElementById("tauxMRParPartie").value;
+TMPP = JSON.parse(tauxMRParPartie);
+
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var myChart =  Highcharts.chart('containerSpider', {
+
+chart: {
+    polar: true,
+    type: 'line'
+},
+
+accessibility: {
+  
+},
+
+title: {
+    text: 'Taux de réussite par partie',
+    x: 0
+},
+
+pane: {
+    size: '80%'
+},
+
+xAxis: {
+    categories: ['Partie 1', 'Partie 2', 'Partie 3', 'Partie 4',
+        'Partie 5', 'Partie 6','Partie 7'],
+    tickmarkPlacement: 'on',
+    lineWidth: 0
+},
+
+yAxis: {
+    gridLineInterpolation: 'polygon',
+    lineWidth: 0,
+    min: 0
+},
+
+tooltip: {
+    shared: true,
+    pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}%</b><br/>'
+},
+
+legend: {
+    align: 'right',
+    verticalAlign: 'middle'
+},
+
+series: [{
+    name: 'Taux de réussite',
+    data: TPP,
+    pointPlacement: 'on'
+},
+{
+    name: 'Taux de réussite médian',
+    data: TMPP,
+    pointPlacement: 'on'
+}],
+
+responsive: {
+    rules: [{
+        condition: {
+            maxWidth: 500
+        },
+        chartOptions: {
+            legend: {
+                align: 'center',
+                verticalAlign: 'bottom'
+            },
+            pane: {
+                size: '70%'
+            }
+        }
+    }]
+}
+
 });
     });
 
 </script>
-</html>
-
 {% endblock %}
-    
-  </div1>

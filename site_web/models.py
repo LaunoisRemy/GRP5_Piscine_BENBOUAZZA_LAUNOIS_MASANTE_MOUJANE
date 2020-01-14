@@ -33,6 +33,12 @@ class TOEIC(models.Model):
     lib_TOEIC=models.CharField(max_length=20) 
     def __str__(self):
         return "Toeic : " +self.lib_TOEIC
+class TOEICEnCours(models.Model):
+    id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic 
+    date_Debut = models.DateTimeField()
+    def __str__(self):
+        return "Session : " + self.id_TOEIC.lib_TOEIC
+
 
 class Question(models.Model):
     id_Question=models.CharField(max_length=3 )
@@ -51,19 +57,17 @@ class Sous_partie(models.Model):
     def __str__(self):
         return "Partie numéro : "+ self.lib_Partie +" " + self.type_Partie
 
-
-
 class ScoreParPartie(models.Model): 
     id_Eleve=models.ForeignKey('Eleve',default=None, on_delete=models.CASCADE)  
-    id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE)  
+    id_TOEICEnCours=models.ForeignKey('TOEICEnCours',default=None, on_delete=models.CASCADE)  
     id_SousPartie=models.ForeignKey('Sous_partie',default=None, on_delete=models.CASCADE) 
     date_Passage = models.DateTimeField()
     score=models.IntegerField() 
     class Meta:
-        unique_together = (("id_SousPartie","id_TOEIC","id_Eleve"),)
+        unique_together = (("id_SousPartie","id_TOEICEnCours","id_Eleve"),)
     def __str__(self):
 
-        return "TOEIC : "+ str(self.id_TOEIC) + "Partie : " + str(self.id_SousPartie) + " score de :" + str(self.score) + " Pour l'élève " + str(self.id_Eleve)
+        return "TOEIC : "+ str(self.id_TOEICEnCours.id_TOEIC) + "Partie : " + str(self.id_SousPartie) + " score de :" + str(self.score) + " Pour l'élève " + str(self.id_Eleve)
         #Fonction double cle primaire
 
     def note_L(self):

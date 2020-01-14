@@ -1,5 +1,7 @@
 <!--DOCTYPE html> -->
 {% load static %}
+{% load crispy_forms_tags %}
+
 <html>
     <head>
         <meta charset="UTF-8">
@@ -12,25 +14,24 @@
     <body>
         <div class="container">
             <div class="d-flex justify-content-center h-100">
-                <div class="card">
-                    {% block content %}
-                    <br>
-                    <h1> Creation de compte </h1>
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h1 class="card-title"> Creation de compte </h1>
+                    </div>
                     <form method="post" action="{% url 'register' %}">
                         {% csrf_token %}
                         {% if form.errors %}
                         <p> Il y a des erreurs dans le form</p>
                         {% endif %}
-                        {{ formUser }}
+                        {{ formUser | crispy}}
                         <br>
-                        {{ form }} 
+                        {{ form | crispy }} 
                         <br>
-
-                        <input type="submit" value="Creation Compte">
-                        <a class="nav-link"  href="{% url 'login' %}">Déjà inscrit?</a>
-
+                        <div class="form-group">
+                            <input type="submit" value="Creation Compte" class="btn login_btn btn-block">
+                        </div>
+                        <a class="card-link"   href="{% url 'login' %}">Déjà inscrit?</a>
                     </form>
-                    {% endblock %}
                 </div>
             </div>
         </div>
