@@ -574,10 +574,12 @@ def filtre_note_par_partie(request):
     
     parties=["Partie 1","Partie 2","Partie 3","Partie 4","Partie 5","Partie 6","Partie7"]
     moyennes=[moy1,moy2,moy3,moy4,moy5,moy6,moy7]
-    tauxRParPartie=[100*med1/6,100*med2/25,100*med3/39,100*med4/30,100*med5/30,100*med6/16,100*med7/54]
+    tauxMRParPartie=[100*med1/6,100*med2/25,100*med3/39,100*med4/30,100*med5/30,100*med6/16,100*med7/54]
+    tauxRParPartie=[100*moy1/6,100*moy2/25,100*moy3/39,100*moy4/30,100*moy5/30,100*moy6/16,100*moy7/54]
 
-    tauxdereussite=[100*moy1/6,100*moy2/25,100*moy3/39,100*moy4/30,100*moy5/30,100*moy6/16,100*moy7/54]
-    return render(request,'espace_prof/search_user.html',{"tauxRParPartie":json.dumps(tauxdereussite),"txEchec":json.dumps(txEchec),"txReussite":json.dumps(txReussite),'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
+    print("tauxMRParPartie",tauxMRParPartie)
+    print("TRPP",tauxRParPartie)
+    return render(request,'espace_prof/search_user.html',{"tauxMRParPartie":json.dumps(tauxMRParPartie),"tauxRParPartie":json.dumps(tauxRParPartie),"txEchec":json.dumps(txEchec),"txReussite":json.dumps(txReussite),'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
 
 
 def graph1(request,user_filter):
