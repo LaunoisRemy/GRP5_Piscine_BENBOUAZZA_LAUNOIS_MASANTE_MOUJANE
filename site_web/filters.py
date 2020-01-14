@@ -10,10 +10,8 @@ class SearchFilter(django_filters.FilterSet):
          ]
 
 class FiltreNoteParPartie(django_filters.FilterSet):
-
     class Meta:
         model = ScoreParPartie
-        id_Eleve = django_filters.ModelChoiceFilter(field_name='Oui')
         fields = ['id_TOEICEnCours__id_TOEIC', 'id_Eleve','id_Eleve__groupe','id_Eleve__classe'
          ]
 

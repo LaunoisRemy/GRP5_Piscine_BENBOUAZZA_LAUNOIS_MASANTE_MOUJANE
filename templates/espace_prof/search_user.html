@@ -9,8 +9,7 @@
      integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
      crossorigin="anonymous"></script>
       <!-- highcharts CDN -->
-     <script src="https://code.highcharts.com/highcharts.src.js"></script>
-     <script src="https://code.highcharts.com/highcharts.js"></script>
+  
      <link rel="stylesheet" href="{% static 'css/blog.css' %}">
  
    
@@ -40,8 +39,11 @@
  {% endblock %}
 
  {% block content %}
-  <form method="get">
+ <div class="filtre">
+     <form method="get">
     {{ filter.form.as_p }}
+</div>
+  
     <button class="btn btn-primary" type="submit">Search</button>
   </form>
 
@@ -51,25 +53,28 @@
 
 <body>
 
-    <h1>Taux de réussite</h1>
+    <h1 class="title">Taux de réussite</h1>
+    <br><br>
 
     <div id="containerPie" style="width:50%; height:33%px;"></div>
     <div id="containerSpider" style="width:50%; height:33%px;"></div>
 
-
-    <h1>Bonnes réponses par sous partie (1,2,3, ...)</h1>
-
+    <br><br>
+    <h1 class="title">Bonnes réponses par sous partie</h1>
+    <br><br>
+  
     <div id="container1" style="width:25%; height:25%px;"></div>
     <div id="container2" style="width:25%; height:25%px;"></div>
-    <div id="container3" style="width:25%; height:25%px;"></div>
     <div id="container4" style="width:25%; height:33%px;"></div>
+    <div id="container3" style="width:25%; height:25%px;"></div>
     <div id="container5" style="width:25%; height:33%px;"></div>
     <div id="container6" style="width:25%; height:33%px;"></div>
     <div id="container7" style="width:25%; height:33%px;"></div>
-    <br>
 
-    <h2>Bonnes réponses par partie LISTENING/READING</h2>
-    <br>
+    <br><br>
+
+    <h1 class="title">Reading/Listening</h1>
+    <br><br>
 
     <div id="containerR" style="width:50%; height:400px;"></div>
     <div id="containerL" style="width:50%; height:400px;"></div>

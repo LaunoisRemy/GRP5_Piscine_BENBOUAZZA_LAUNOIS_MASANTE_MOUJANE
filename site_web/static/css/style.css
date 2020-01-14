@@ -18,5 +18,55 @@
 }
 
 h1, h2, h3{
-    color: brown;
+    color:brown;
+}
+
+#container1{
+    float:left;
+}
+
+#containerPie{
+    float:left;
+}
+
+#containerSpider{
+    float:right;
+}
+
+#container1{
+    float:left;
+}
+#container2{
+    float:left;
+}
+#container3{
+    float:right;
+}
+#container4{
+    float:right;
+}
+
+#container5{
+    float:left;
+}
+#container6{
+    float:left;
+}
+#container7{
+    float:left;
+}
+#containerR{
+    float:left;
+}
+
+#containerL{
+    float:right;
+}
+
+.title{
+    text-align: center;
+}
+
+.filtre{
+    margin-block: solid;
 }
