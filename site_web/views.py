@@ -227,8 +227,6 @@ def session(request):
     return render(request,"liste.html",context)
 
 def espace_eleve(request): # Quand la fonction est appelée elle a pris en paramètre un id_eleve et affiche les résultats aux toeic de l'élève concerné
-    print(os.environ.get('OneDrive'),"====================")
-    print(os.environ.get('EMAIL_PASS'))
     #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_SousPartie__type_Partie').annotate('id_TOEIC').annotate(Sum('score'))
 
     ### Ici scoretot est le tableau, des des scores par parties et par toeic de l'élève qui a pour id id_eleve
