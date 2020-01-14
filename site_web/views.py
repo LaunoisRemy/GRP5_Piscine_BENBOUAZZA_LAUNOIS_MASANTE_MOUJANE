@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from datetime import datetime,timedelta
 import statistics
 import json
+import os
 # Create your views here.
 
 
@@ -26,16 +27,14 @@ def mediane(score,effectiftot):
         return k-1
 
 def home(request):
-    if request.user.is_authenticated:
-        context ={
-        "titre":"Bonjour " + request.user.username
-        }
-    else :
-        context ={
-        "titre":"Home"
-        }
-    return render(request,"index.html",context)
 
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect(filtre_note_par_partie)
+        else :
+            return redirect(espace_eleve)
+    else :
+        return redirect('login')
 
 # TODO deux fonctions qui font presque la même chose, synthétiser 
 """
@@ -228,7 +227,8 @@ def session(request):
     return render(request,"liste.html",context)
 
 def espace_eleve(request): # Quand la fonction est appelée elle a pris en paramètre un id_eleve et affiche les résultats aux toeic de l'élève concerné
-
+    print(os.environ.get('OneDrive'),"====================")
+    print(os.environ.get('EMAIL_PASS'))
     #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_SousPartie__type_Partie').annotate('id_TOEIC').annotate(Sum('score'))
 
     ### Ici scoretot est le tableau, des des scores par parties et par toeic de l'élève qui a pour id id_eleve
@@ -327,14 +327,6 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
     
 
 
-
-    ### C'est ici que le professeur peut voir les statistiques sur les résultats de toeic
-def espace_professeur(request):
-    scoretot=ScoreParPartie.objects.values('id_TOEICEnCours__id_TOEIC','id_SousPartie__type_Partie').annotate(
-        score_type=Sum('score')).values('id_TOEICEnCours__id_TOEIC','id_Eleve__nom','id_SousPartie__type_Partie','score_type')
-    return liste(request,"Voici tout les résultats :",scoretot)
-
-
 def register(request):
     if(request.user.is_authenticated):
         return redirect(home)
@@ -379,210 +371,213 @@ def search(request):
     return render(request, 'espace_prof/search_user.html', {'filter': user_filter})
 
 def filtre_note_par_partie(request):
-    user_list = ScoreParPartie.objects.all()#.values('id_TOEIC','id_SousPartie__type_Partie').annotate(score=Sum('score')).values('id_TOEIC','score','id_SousPartie__lib_Partie','id_Eleve__nom',)
-    ### PROBLEME : Calcul bien la somme des bonne réponse par partie mais problème d'affichage
-    #print(user_list)
-    user_filter = FiltreNoteParPartie(request.GET, queryset=user_list) #Récup
-    #user_filter n'est pas un queryset, user_filter.qs l'est !
-    #print("Le filtre récupéré",user_filter.qs)
+    if request.user.is_superuser == False:
+        return redirect(home)
+    else :
+        user_list = ScoreParPartie.objects.all()#.values('id_TOEIC','id_SousPartie__type_Partie').annotate(score=Sum('score')).values('id_TOEIC','score','id_SousPartie__lib_Partie','id_Eleve__nom',)
+        ### PROBLEME : Calcul bien la somme des bonne réponse par partie mais problème d'affichage
+        #print(user_list)
+        user_filter = FiltreNoteParPartie(request.GET, queryset=user_list) #Récup
+        #user_filter n'est pas un queryset, user_filter.qs l'est !
+        #print("Le filtre récupéré",user_filter.qs)
+        
+        fieldname = 'score'
+        requete1 = user_filter.qs.filter(id_SousPartie__lib_Partie=1).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requete2 = user_filter.qs.filter(id_SousPartie__lib_Partie=2).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requete3 = user_filter.qs.filter(id_SousPartie__lib_Partie=3).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requete4 = user_filter.qs.filter(id_SousPartie__lib_Partie=4).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requete5 = user_filter.qs.filter(id_SousPartie__lib_Partie=5).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requete6 = user_filter.qs.filter(id_SousPartie__lib_Partie=6).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requete7 = user_filter.qs.filter(id_SousPartie__lib_Partie=7).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requete8 = user_filter.qs.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
+        requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values('id_TOEICEnCours__id_TOEIC','id_Eleve').order_by('id_TOEICEnCours__id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
+        requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values('id_TOEICEnCours__id_TOEIC','id_Eleve').order_by('id_TOEICEnCours__id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
     
-    fieldname = 'score'
-    requete1 = user_filter.qs.filter(id_SousPartie__lib_Partie=1).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete2 = user_filter.qs.filter(id_SousPartie__lib_Partie=2).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete3 = user_filter.qs.filter(id_SousPartie__lib_Partie=3).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete4 = user_filter.qs.filter(id_SousPartie__lib_Partie=4).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete5 = user_filter.qs.filter(id_SousPartie__lib_Partie=5).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete6 = user_filter.qs.filter(id_SousPartie__lib_Partie=6).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete7 = user_filter.qs.filter(id_SousPartie__lib_Partie=7).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requete8 = user_filter.qs.filter(id_SousPartie__lib_Partie=8).values(fieldname).order_by(fieldname).annotate(the_count=Count(fieldname))
-    requeteR = user_filter.qs.filter(id_SousPartie__type_Partie='R').values('id_TOEICEnCours__id_TOEIC','id_Eleve').order_by('id_TOEICEnCours__id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
-    requeteL = user_filter.qs.filter(id_SousPartie__type_Partie='L').values('id_TOEICEnCours__id_TOEIC','id_Eleve').order_by('id_TOEICEnCours__id_TOEIC','id_Eleve').annotate(sommetot=Sum('score'))
-  
 
-    # On exprime transmet les données des queryset en liste pour être plus maniable, avec chartit problèmes pour les notes etc
-    # du coup j'ai changé et utilisé highchart qui utilise les listes.
-    # Certes moins efficace mais beaucoup plus maniable
+        # On exprime transmet les données des queryset en liste pour être plus maniable, avec chartit problèmes pour les notes etc
+        # du coup j'ai changé et utilisé highchart qui utilise les listes.
+        # Certes moins efficace mais beaucoup plus maniable
 
 
 
 
-    score1 = [0,0,0,0,0,0,0]
-    cat1 = ["0","1","2","3","4","5","6"]
-    moy1=0
-    effectiftot=0
-    print(requete1)
-    for j in requete1:
-        score1[j['score']]+=j['the_count'] #Pour un score on a un effectif de personne qui ont eu cette note
-        moy1+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-        effectiftot+=j['the_count']    # sur l'effectif total
-    
-    # Ici on recup une liste des notes totales
-    notes=[0]*effectiftot
-    k=0
-    for r in requeteR :
-        notes[k]+=NOTE_R(r["sommetot"])
-        k+=1
-    k=0
-    for l in requeteL :
-        notes[k]+=NOTE_L(l["sommetot"])
-        k+=1
-    print('notes totales',notes)
-
-    #On calcul le taux de réussite
-    valide=0
-    rate=0
-    for i in range(len(notes)):
-        if notes[i]<815:
-            rate+=1
-        else: 
-            valide+=1
-   
-    
-    
-    
-    score2=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    
-    cat2 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25"]
-    moy2=0
-    
-    for j in requete2:
-        score2[j['score']]+=j['the_count']
-        moy2+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-
-    score3=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    cat3 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
-    moy3=0
-    for j in requete3:
-        score3[j['score']]+=j['the_count']
-        moy3+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    
-    score4=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    cat4 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
-    moy4=0
-    for j in requete4:
-        score4[j['score']]+=j['the_count']
-        moy4+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    
-    score5=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    cat5 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
-    moy5=0
-    for j in requete5:
-        score5[j['score']]+=j['the_count']
-        moy5+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-    
-    score6 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    cat6 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]
-    moy6=0
-    for j in requete6:
-        score6[j['score']]+=j['the_count']
-        moy6+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-      
-    score7=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    cat7 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54"]
-    moy7 = 0
-    for j in requete7:
-        score7[j['score']]+=j['the_count']
-        moy7+=j['score']*j['the_count'] # La moyenne est la somme des points total 
-
-    scoreR=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    catR = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"]
-    for j in requeteR:
-        scoreR[j['sommetot']]+=1
-    
-    scoreR = json.dumps(scoreR)
-    catR = json.dumps(catR)
-    
-    scoreL=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    catL = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"]
-    for j in requeteL:
-        scoreL[j['sommetot']]+=1
-    
-    scoreL = json.dumps(scoreL)
-    catL = json.dumps(catL)
-
-    a=[0,1,2,3,4,5,6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]
-    for i in range(len(a)):
-        a[i]=NOTE_L(a[i])
-    print(a)
-    R=[5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 65, 70, 80, 85, 90, 95, 100, 110, 115, 120, 125, 130, 140, 145, 150, 160, 165, 170, 175, 180, 190, 195, 200, 210, 215, 220, 225, 230, 235, 240, 250, 255, 260, 265, 270, 280, 285, 290, 300, 305, 310, 320, 325, 330, 335, 340, 350, 355, 360, 365, 370, 380, 385, 390, 395, 400, 405, 410, 415, 420, 425, 430, 435, 445, 450, 455, 465, 470, 480, 485, 490, 495, 495, 495, 495]
-    L=[5, 5, 5, 5, 5, 5, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 115, 120, 125, 130, 135, 140, 145, 150, 160, 165, 170, 175, 180, 185, 190, 195, 200, 210, 215, 220, 230, 240, 245, 250, 255, 260, 270, 275, 280, 290, 295, 300, 310, 315, 320, 325, 330, 340, 345, 350, 360, 365, 370, 380, 385, 390, 395, 400, 405, 410, 420, 425, 430, 440, 445, 450, 460, 465, 470, 475, 480, 485, 490, 495, 495, 495, 495, 495, 495, 495, 495, 495, 495, 495]
-
-    if effectiftot>0:
-        ## On calcul les moyennes par parties
-
-        moy1=moy1/effectiftot   
-        moy2=moy2/effectiftot
-        moy3=moy3/effectiftot
-        moy4=moy4/effectiftot
-        moy5=moy5/effectiftot
-        moy6=moy6/effectiftot
-        moy7=moy7/effectiftot
-
-        ## On calcul les medianes par parties
-        med1=mediane(score1,effectiftot)
-        med2=mediane(score2,effectiftot)
-        med3=mediane(score3,effectiftot)
-        med4=mediane(score4,effectiftot)
-        med5=mediane(score5,effectiftot)
-        med6=mediane(score6,effectiftot)
-        med7=mediane(score7,effectiftot)
-
-        ## Calcul du taux de réussite total
-
-        txReussite = float(valide)/effectiftot*100
-        txEchec= 100.0-txReussite
-    else:
-        # On calcul les moyennes par parties
-
+        score1 = [0,0,0,0,0,0,0]
+        cat1 = ["0","1","2","3","4","5","6"]
         moy1=0
-        moy2=0
-        moy3=0
-        moy4=0
-        moy5=0
-        moy6=0
-        moy7=0
+        effectiftot=0
+        print(requete1)
+        for j in requete1:
+            score1[j['score']]+=j['the_count'] #Pour un score on a un effectif de personne qui ont eu cette note
+            moy1+=j['score']*j['the_count'] # La moyenne est la somme des points total 
+            effectiftot+=j['the_count']    # sur l'effectif total
+        
+        # Ici on recup une liste des notes totales
+        notes=[0]*effectiftot
+        k=0
+        for r in requeteR :
+            notes[k]+=NOTE_R(r["sommetot"])
+            k+=1
+        k=0
+        for l in requeteL :
+            notes[k]+=NOTE_L(l["sommetot"])
+            k+=1
+        print('notes totales',notes)
 
-        ## On calcul les medianes par parties
-        med1=0
-        med2=0
-        med3=0
-        med4=0
-        med5=0
-        med6=0
-        med7=0
-
-        ## Calcul du taux de réussite total
-
-        txReussite =0
-        txEchec= 0
-
-    score1 = json.dumps(score1)
-    cat1 = json.dumps(cat1)
-    score2 = json.dumps(score2)
-    cat2 = json.dumps(cat2)
-    score3 = json.dumps(score3)
-    cat3 = json.dumps(cat3)
-    score4 = json.dumps(score4)
-    cat4 = json.dumps(cat4)
-    score5 = json.dumps(score5)
-    cat5 = json.dumps(cat5)
-    score6 = json.dumps(score6)
-    cat6 = json.dumps(cat6)
-    score7 = json.dumps(score7)
-    cat7 = json.dumps(cat7)
-
-
-
-
+        #On calcul le taux de réussite
+        valide=0
+        rate=0
+        for i in range(len(notes)):
+            if notes[i]<815:
+                rate+=1
+            else: 
+                valide+=1
     
-    parties=["Partie 1","Partie 2","Partie 3","Partie 4","Partie 5","Partie 6","Partie7"]
-    moyennes=[moy1,moy2,moy3,moy4,moy5,moy6,moy7]
-    tauxMRParPartie=[100*med1/6,100*med2/25,100*med3/39,100*med4/30,100*med5/30,100*med6/16,100*med7/54]
-    tauxRParPartie=[100*moy1/6,100*moy2/25,100*moy3/39,100*moy4/30,100*moy5/30,100*moy6/16,100*moy7/54]
+        
+        
+        
+        score2=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        
+        cat2 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25"]
+        moy2=0
+        
+        for j in requete2:
+            score2[j['score']]+=j['the_count']
+            moy2+=j['score']*j['the_count'] # La moyenne est la somme des points total 
 
-    print("tauxMRParPartie",tauxMRParPartie)
-    print("TRPP",tauxRParPartie)
-    return render(request,'espace_prof/search_user.html',{"tauxMRParPartie":json.dumps(tauxMRParPartie),"tauxRParPartie":json.dumps(tauxRParPartie),"txEchec":json.dumps(txEchec),"txReussite":json.dumps(txReussite),'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
+        score3=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        cat3 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39"]
+        moy3=0
+        for j in requete3:
+            score3[j['score']]+=j['the_count']
+            moy3+=j['score']*j['the_count'] # La moyenne est la somme des points total 
+        
+        score4=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        cat4 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
+        moy4=0
+        for j in requete4:
+            score4[j['score']]+=j['the_count']
+            moy4+=j['score']*j['the_count'] # La moyenne est la somme des points total 
+        
+        score5=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        cat5 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]
+        moy5=0
+        for j in requete5:
+            score5[j['score']]+=j['the_count']
+            moy5+=j['score']*j['the_count'] # La moyenne est la somme des points total 
+        
+        score6 = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        cat6 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"]
+        moy6=0
+        for j in requete6:
+            score6[j['score']]+=j['the_count']
+            moy6+=j['score']*j['the_count'] # La moyenne est la somme des points total 
+        
+        score7=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        cat7 = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54"]
+        moy7 = 0
+        for j in requete7:
+            score7[j['score']]+=j['the_count']
+            moy7+=j['score']*j['the_count'] # La moyenne est la somme des points total 
+
+        scoreR=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        catR = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"]
+        for j in requeteR:
+            scoreR[j['sommetot']]+=1
+        
+        scoreR = json.dumps(scoreR)
+        catR = json.dumps(catR)
+        
+        scoreL=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        catL = ["0","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100"]
+        for j in requeteL:
+            scoreL[j['sommetot']]+=1
+        
+        scoreL = json.dumps(scoreL)
+        catL = json.dumps(catL)
+
+        a=[0,1,2,3,4,5,6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]
+        for i in range(len(a)):
+            a[i]=NOTE_L(a[i])
+        print(a)
+        R=[5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 65, 70, 80, 85, 90, 95, 100, 110, 115, 120, 125, 130, 140, 145, 150, 160, 165, 170, 175, 180, 190, 195, 200, 210, 215, 220, 225, 230, 235, 240, 250, 255, 260, 265, 270, 280, 285, 290, 300, 305, 310, 320, 325, 330, 335, 340, 350, 355, 360, 365, 370, 380, 385, 390, 395, 400, 405, 410, 415, 420, 425, 430, 435, 445, 450, 455, 465, 470, 480, 485, 490, 495, 495, 495, 495]
+        L=[5, 5, 5, 5, 5, 5, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 110, 115, 120, 125, 130, 135, 140, 145, 150, 160, 165, 170, 175, 180, 185, 190, 195, 200, 210, 215, 220, 230, 240, 245, 250, 255, 260, 270, 275, 280, 290, 295, 300, 310, 315, 320, 325, 330, 340, 345, 350, 360, 365, 370, 380, 385, 390, 395, 400, 405, 410, 420, 425, 430, 440, 445, 450, 460, 465, 470, 475, 480, 485, 490, 495, 495, 495, 495, 495, 495, 495, 495, 495, 495, 495]
+
+        if effectiftot>0:
+            ## On calcul les moyennes par parties
+
+            moy1=moy1/effectiftot   
+            moy2=moy2/effectiftot
+            moy3=moy3/effectiftot
+            moy4=moy4/effectiftot
+            moy5=moy5/effectiftot
+            moy6=moy6/effectiftot
+            moy7=moy7/effectiftot
+
+            ## On calcul les medianes par parties
+            med1=mediane(score1,effectiftot)
+            med2=mediane(score2,effectiftot)
+            med3=mediane(score3,effectiftot)
+            med4=mediane(score4,effectiftot)
+            med5=mediane(score5,effectiftot)
+            med6=mediane(score6,effectiftot)
+            med7=mediane(score7,effectiftot)
+
+            ## Calcul du taux de réussite total
+
+            txReussite = float(valide)/effectiftot*100
+            txEchec= 100.0-txReussite
+        else:
+            # On calcul les moyennes par parties
+
+            moy1=0
+            moy2=0
+            moy3=0
+            moy4=0
+            moy5=0
+            moy6=0
+            moy7=0
+
+            ## On calcul les medianes par parties
+            med1=0
+            med2=0
+            med3=0
+            med4=0
+            med5=0
+            med6=0
+            med7=0
+
+            ## Calcul du taux de réussite total
+
+            txReussite =0
+            txEchec= 0
+
+        score1 = json.dumps(score1)
+        cat1 = json.dumps(cat1)
+        score2 = json.dumps(score2)
+        cat2 = json.dumps(cat2)
+        score3 = json.dumps(score3)
+        cat3 = json.dumps(cat3)
+        score4 = json.dumps(score4)
+        cat4 = json.dumps(cat4)
+        score5 = json.dumps(score5)
+        cat5 = json.dumps(cat5)
+        score6 = json.dumps(score6)
+        cat6 = json.dumps(cat6)
+        score7 = json.dumps(score7)
+        cat7 = json.dumps(cat7)
+
+
+
+
+        
+        parties=["Partie 1","Partie 2","Partie 3","Partie 4","Partie 5","Partie 6","Partie7"]
+        moyennes=[moy1,moy2,moy3,moy4,moy5,moy6,moy7]
+        tauxMRParPartie=[100*med1/6,100*med2/25,100*med3/39,100*med4/30,100*med5/30,100*med6/16,100*med7/54]
+        tauxRParPartie=[100*moy1/6,100*moy2/25,100*moy3/39,100*moy4/30,100*moy5/30,100*moy6/16,100*moy7/54]
+
+        print("tauxMRParPartie",tauxMRParPartie)
+        print("TRPP",tauxRParPartie)
+        return render(request,'espace_prof/search_user.html',{"tauxMRParPartie":json.dumps(tauxMRParPartie),"tauxRParPartie":json.dumps(tauxRParPartie),"txEchec":json.dumps(txEchec),"txReussite":json.dumps(txReussite),'cat1':cat1,'score1':score1,'cat2':cat2,'score2':score2,'cat3':cat3,'score3':score3,'cat4':cat4,'score4':score4,'cat5':cat5,'score5':score5,'cat6':cat6,'score6':score6,'cat7':cat7,'score7':score7,'catR':catR,'scoreR':scoreR,'catL':catL,'scoreL':scoreL,'filter': user_filter})
 
 
 def graph1(request,user_filter):
