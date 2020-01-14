@@ -18,5 +18,5 @@ urlpatterns = [
     path('', views.register, name="register" ),
     path('espace_prof', views.search),
     path('filtre_notepp',views.filtre_note_par_partie,name="stats_Prof"),
-    path('consulter_eleve',views.consulter_espace_eleve,name="cep")
+    #path('consulter_eleve',views.consulter_espace_eleve,name="cep")
 ]
