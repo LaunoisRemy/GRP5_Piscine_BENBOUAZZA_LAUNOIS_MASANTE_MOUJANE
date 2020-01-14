@@ -606,5 +606,14 @@ def graph1(request,user_filter):
     
     return render(request,'espace_prof/graphes.html',{'cht1':cht1})
 
-### Comment afficher le graph en plus du resultat de la recherche
+def regarder_tec(request):
+
+    tec = TOEICEnCours.objects.all()
+    tec=list(tec)
+    print(tec[0])
+    return render(request,"liste.html",{'tec':tec}) 
+
+    return 
+
+
 
