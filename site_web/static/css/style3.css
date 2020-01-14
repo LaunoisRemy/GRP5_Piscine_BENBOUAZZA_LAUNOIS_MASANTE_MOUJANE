@@ -2,9 +2,9 @@
 @import url('https://fonts.googleapis.com/css?family=Numans');
 
 .login+html,body{
-background-image: url('http://getwallpapers.com/wallpaper/full/a/5/d/544750.jpg');
-background-size: cover;
+background-image: url('https://admin.aifcc.com/images/catalogue/produit/1499679118-toeic-zoom.jpg');
 background-repeat: no-repeat;
+background-position: center;
 height: 100%;
 font-family: 'Numans', sans-serif;
 }
@@ -107,5 +107,8 @@ label{
     width: 100px;
 }
 input{
-    size: 10px;
+    width: 100px;
+}
+li{
+    color: white;
 }
