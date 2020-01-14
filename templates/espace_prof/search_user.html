@@ -1,16 +1,15 @@
-
+{% extends "base.html" %}
 {% load static %}
-<html lang="en">
 
-  <head>
+
+  {% block head %}
     <!-- jQuery CDN -->
      <script
      src="https://code.jquery.com/jquery-1.12.4.min.js"
      integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
      crossorigin="anonymous"></script>
       <!-- highcharts CDN -->
-     <script src="https://code.highcharts.com/highcharts.src.js"></script>
-     <script src="https://code.highcharts.com/highcharts.js"></script>
+  
      <link rel="stylesheet" href="{% static 'css/blog.css' %}">
  
    
@@ -37,37 +36,49 @@
    <input type="hidden" id="tauxRParPartie" name="variable" value="{{tauxRParPartie}}">
    <input type="hidden" id="tauxMRParPartie" name="variable" value="{{tauxMRParPartie}}">
 
- </head>
-  <form method="get">
-    {{ filter.form.as_p }}
-    <button type="submit">Search</button>
-  </form>
-  
+ {% endblock %}
 
-  <div1>
-    {% block graphes %}
+ {% block content %}
+ <div class="filtre">
+     <form method="get">
+    {{ filter.form.as_p }}
+</div>
+  
+    <button class="btn btn-primary" type="submit">Search</button>
+  </form>
 
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/highcharts-more.js"></script>
     <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
 <body>
-    <h1>Bonnes réponses par sous partie (1,2,3, ...)</h1>
 
+    <h1 class="title">Taux de réussite</h1>
+    <br><br>
+
+    <div id="containerPie" style="width:50%; height:33%px;"></div>
+    <div id="containerSpider" style="width:50%; height:33%px;"></div>
+
+    <br><br>
+    <h1 class="title">Bonnes réponses par sous partie</h1>
+    <br><br>
+  
     <div id="container1" style="width:25%; height:25%px;"></div>
     <div id="container2" style="width:25%; height:25%px;"></div>
-    <div id="container3" style="width:25%; height:25%px;"></div>
     <div id="container4" style="width:25%; height:33%px;"></div>
+    <div id="container3" style="width:25%; height:25%px;"></div>
     <div id="container5" style="width:25%; height:33%px;"></div>
     <div id="container6" style="width:25%; height:33%px;"></div>
     <div id="container7" style="width:25%; height:33%px;"></div>
 
-    <h2>Bonnes réponses par partie LISTENING/READING</h2>
+    <br><br>
+
+    <h1 class="title">Reading/Listening</h1>
+    <br><br>
 
     <div id="containerR" style="width:50%; height:400px;"></div>
     <div id="containerL" style="width:50%; height:400px;"></div>
-    <div id="containerPie" style="width:25%; height:33%px;"></div>
-    <div id="containerSpider" style="width:25%; height:33%px;"></div>
+    
 
 
 
@@ -88,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 1'
+                text: 'Partie 1'
             },
             xAxis: {
                 categories: x1,
@@ -118,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 2'
+                text: 'Partie 2'
             },
             xAxis: {
                 categories: x2,
@@ -148,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 3'
+                text: 'Partie 3'
             },
             xAxis: {
                 categories: x3,
@@ -178,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 4'
+                text: 'Partie 4'
             },
             xAxis: {
                 categories: x4,
@@ -209,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 5'
+                text: 'Partie 5'
             },
             xAxis: {
                 categories: x5,
@@ -240,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 6'
+                text: 'Partie 6'
             },
             xAxis: {
                 categories: x6,
@@ -272,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie 7'
+                text: 'Partie 7'
             },
             xAxis: {
                 categories: x7,
@@ -303,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie R'
+                text: 'Partie R'
             },
             xAxis: {
                 categories: xR
@@ -334,7 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 type: 'line'
             },
             title: {
-                text: 'Bonnes réponses partie L'
+                text: 'Partie L'
             },
             xAxis: {
                 categories: xL,
@@ -482,8 +493,4 @@ responsive: {
     });
 
 </script>
-</html>
-
 {% endblock %}
-    
-  </div1>

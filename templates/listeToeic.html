@@ -1,23 +1,21 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <h1>{{ titre }}</h1>
 
 {% for obj in liste %}
 {% if user.is_superuser %}
-
 <li>{{obj.id}}  : {{obj}}</li>
     {% if obj.id not in list_idToeicEnCours %}
     <form method='post'>
         {% csrf_token %}
         <button class="btn btn-primary" type="submit" name="toeic" value={{obj.id}} >Lancer TOEIC </button>
     </form>
-    {% else %}
-    
+    {% else %} 
     {% for tec in toeicEnCours %}
         {% if tec.id == obj.id %} 
+        
         <script>
-
+            /**
             
             var heureD = "{{tec.date_Debut.hour}}";
             var minuteD = "{{tec.date_Debut.minute}}";
@@ -33,7 +31,7 @@
 
             var now = new Date().getTime();
 
-            if (countDownDate - now < 0) {
+            /**if (countDownDate - now < 0) {
                 location.href="/home";
               }
             // Update the count down every 1 second
@@ -61,7 +59,7 @@
                 document.write(distance)
 
               }
-            }, 1000);
+            }, 1000);*/
         </script>
         <p id="{{obj.id}}"></p>
 
