@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 {% block content %}
 <h1>{{ titre }}</h1>
@@ -15,8 +16,8 @@
     
 
     </form>
-    {% for tec in toeicEnCours %}
-        {% if tec.id == obj.id %} 
+	{% for tec in toeicEnCours %}
+        {% if tec.id_TOEIC.id == obj.id %} 
         <p>Mot de passe : {{ tec.password }} </p>
         <script>
             /**
