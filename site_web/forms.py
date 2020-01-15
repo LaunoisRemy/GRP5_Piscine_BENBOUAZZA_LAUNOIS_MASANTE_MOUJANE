@@ -9,7 +9,7 @@ class qcm(forms.Form):
                ('b','b'),
                ('c','c'),
                ('d','d'),)
-    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('c','c'))
+    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('d','d'))
 class qcmEleve(forms.Form):
     CHOICES = (('a','a'),
                ('b','b'),
