@@ -182,7 +182,7 @@ def liste_TOEIC(request):
         for tEc in toeicEnCours :
             if(t.id==tEc.id_TOEIC.id and t.id not in list_idToeicEnCours):
                 date_debut = (tEc.date_Debut)
-                finSession = date_debut + timedelta(hours=2)
+                finSession = date_debut + timedelta(hours=3)
                 if(estPlusGrandDate(date_debut,maintenant)  ) :
                     if estPlusGrandDate(maintenant,finSession):
                         list_idToeicEnCours.append(t.id)
@@ -299,25 +299,27 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
         #TODO Enelever les trucs qui servent plus dans cette vue
         #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
     formulaire = EntrerSession(None)
+    utilisateur = request.user
+    eleve = Eleve.objects.filter(user=utilisateur)[0]
+    querry_toeicPasse=list(ScoreParPartie.objects.filter(id_Eleve=eleve ) )
+    liste_ToeicPasse = []
 
+    for score in querry_toeicPasse :
+        if score.id_TOEICEnCours not in liste_ToeicPasse :
+            print(liste_ToeicPasse)
+            liste_ToeicPasse.append(score.id_TOEICEnCours)
     if request.method == "POST":
         
         data = request.POST.copy()
         pwd=data.get('password')
         print("PWD: ",pwd)   
-        utilisateur = request.user
-        eleve = Eleve.objects.filter(user=utilisateur)[0]
-        querry_toeicPasse=list(ScoreParPartie.objects.filter(id_Eleve=eleve ) )
-        liste_ToeicPasse = []
 
-        for score in querry_toeicPasse :
-            if score.id_TOEICEnCours not in liste_ToeicPasse :
-                liste_ToeicPasse.append(score.id_TOEICEnCours)
 
         print(querry_toeicPasse)   
         print(liste_ToeicPasse,"dzadzaaz")   
-
+        print(TOEICEnCours.objects.all())
         for i in list(TOEICEnCours.objects.all()):
+            print(i not in liste_ToeicPasse, "fdsqfqs")
             if(i not in liste_ToeicPasse):
                 if pwd == i.password:
                     return redirect('repondTOEIC',i.id)
@@ -347,7 +349,7 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
                 if estPlusGrandDate(maintenant,finSession):
                     toeicDispos.append(t) 
 
-    context["liste"] = toeicDispos     
+    context["liste"] = liste_ToeicPasse     
 
     return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
     
