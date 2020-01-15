@@ -65,3 +65,5 @@ class UserForm(forms.ModelForm):
         fields = ["nom","prenom","classe","groupe"]
     
 
+class EntrerSession(forms.Form):
+    password = forms.CharField(label='Code session : ', required=True,widget=forms.TextInput(attrs={'required': "required"}), max_length=100 )

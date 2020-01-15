@@ -12,6 +12,7 @@ from django.views.generic import TemplateView
 from .filters import SearchFilter,FiltreNoteParPartie
 from django.contrib.auth.models import User
 from datetime import datetime,timedelta
+from django.contrib.auth.base_user import BaseUserManager
 import statistics
 import json
 import os
@@ -200,7 +201,9 @@ def liste_TOEIC(request):
             toeic = TOEIC.objects.filter(id=request.POST['toeic'])[0]
             data = {
                 "id_TOEIC":toeic.id,
-                "date_Debut":datetime.now()
+                "date_Debut":datetime.now(),
+                "password":BaseUserManager().make_random_password()
+                ## On enregistre le mot de passe généré  
             }
             toeicEnCoursForm = ToeicEnCoursForm(data)
             if(toeicEnCoursForm.is_valid()):
@@ -295,9 +298,24 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
 
         #TODO Enelever les trucs qui servent plus dans cette vue
         #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
+    formulaire = EntrerSession(None)
+
+    if request.method == "POST":
+        
+        data = request.POST.copy()
+        pwd=data.get('password')
+        print("PWD: ",pwd)            
+        for i in list(TOEICEnCours.objects.all()):
+            print(i)
+            if pwd == i.password:
+                print(i.id)
+                return redirect('repondTOEIC',i.id)
+                print("BON MOT DE PASSE")
 
 
-    context = {'NoteR':json.dumps(listeR),'NoteTOT':json.dumps(listeTOT),'NoteL':json.dumps(listeL),'listeDate':json.dumps(listeDate),'nomprenom':nomprenom}
+
+
+    context = {"formulaire":formulaire,'NoteR':json.dumps(listeR),'NoteTOT':json.dumps(listeTOT),'NoteL':json.dumps(listeL),'listeDate':json.dumps(listeDate),'nomprenom':nomprenom}
         #print('CONNNNNNTEXTXTTTXXTT',context)
         #scoretot=scoretot.objects.values('id_TOEIC').annotate(score=Sum('score')).values('id_Toeic','id_Eleve__nom','id_SousPartie__type_Partie','score')
     maintenant=datetime.now()
@@ -599,5 +617,15 @@ def graph1(request,user_filter):
     
     return render(request,'espace_prof/graphes.html',{'cht1':cht1})
 
-### Comment afficher le graph en plus du resultat de la recherche
+def consulter_eleve(request):
+    eleves_mea=[]
+    eleves_ig=[]
+    eleves = Eleve.objects.all().order_by('classe')
+    for i in eleves:
+        
+        print(eleves)
+    return render(request,"liste.html",{'liste':eleves}) 
+
+
+
 

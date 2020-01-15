@@ -24,6 +24,21 @@
     Voici vos derniers résultats : <br><br>
 
     <div id="container" style="width:50%; height:50%px;"></div>
+
+    <div2>
+
+        <div id="listeTOEIC">
+            <div class="form-group">
+                <form method='post'>
+                    {% csrf_token %}
+        
+            <!-- Nom du toeic : <input type="text" name="NomToeic" required> -->
+            {{ formulaire }}
+            <input class="btn btn-primary" type="submit" value='Rejoindre Session' > 
+        </form>
+        </div>
+
+    </div2>
     
 
 
@@ -78,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 });
 </script>
-    {% for obj in liste %}
+    <!--{% for obj in liste %}
     <li><a href="{% url 'repondTOEIC' obj.id %}">{{obj.id}}  : {{obj}} </a></li>
-    {% endfor %}
+    {% endfor %}-->
 {% endblock %}
