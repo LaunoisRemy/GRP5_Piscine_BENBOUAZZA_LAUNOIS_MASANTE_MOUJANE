@@ -2,9 +2,10 @@
 @import url('https://fonts.googleapis.com/css?family=Numans');
 
 .login+html,body{
-background-image: url('http://getwallpapers.com/wallpaper/full/a/5/d/544750.jpg');
-background-size: cover;
+background-image: url('https://admin.aifcc.com/images/catalogue/produit/1499679118-toeic-zoom.jpg');
 background-repeat: no-repeat;
+backdrop-filter: blur(4px);
+background-position: center;
 height: 100%;
 font-family: 'Numans', sans-serif;
 }
@@ -15,7 +16,7 @@ align-content: center;
 }
 
 .card{
-height: 400px;
+height: 420px;
 margin-top: auto;
 margin-bottom: auto;
 width: 400px;

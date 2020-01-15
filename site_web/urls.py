@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('home', views.home, name='index'),
+    path('', views.home, name='index'),
     path('session', views.session),
     path('eleve/liste', views.liste_Eleve),
     path('classe/liste', views.liste_Classe),
@@ -14,7 +15,7 @@ urlpatterns = [
     path('creerTOEIC/<str:nomToeic>',views.creerTOEIC),
     path('repondTOEIC/<int:id_TEnCours>',views.repondTOEIC, name="repondTOEIC"),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', views.register, name="register" ),
+    path('/register', views.register, name="register" ),
     path('espace_prof', views.search),
     path('filtre_notepp',views.filtre_note_par_partie,name="stats_Prof"),
     #path('consulter_eleve',views.consulter_espace_eleve,name="cep")
