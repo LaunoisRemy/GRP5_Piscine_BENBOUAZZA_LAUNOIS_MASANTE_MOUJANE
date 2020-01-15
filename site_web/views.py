@@ -304,13 +304,23 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
         
         data = request.POST.copy()
         pwd=data.get('password')
-        print("PWD: ",pwd)            
+        print("PWD: ",pwd)   
+        utilisateur = request.user
+        eleve = Eleve.objects.filter(user=utilisateur)[0]
+        querry_toeicPasse=list(ScoreParPartie.objects.filter(id_Eleve=eleve ) )
+        liste_ToeicPasse = []
+
+        for score in querry_toeicPasse :
+            if score.id_TOEICEnCours not in liste_ToeicPasse :
+                liste_ToeicPasse.append(score.id_TOEICEnCours)
+
+        print(querry_toeicPasse)   
+        print(liste_ToeicPasse,"dzadzaaz")   
+
         for i in list(TOEICEnCours.objects.all()):
-            print(i)
-            if pwd == i.password:
-                print(i.id)
-                return redirect('repondTOEIC',i.id)
-                print("BON MOT DE PASSE")
+            if(i not in liste_ToeicPasse):
+                if pwd == i.password:
+                    return redirect('repondTOEIC',i.id)
 
 
 
