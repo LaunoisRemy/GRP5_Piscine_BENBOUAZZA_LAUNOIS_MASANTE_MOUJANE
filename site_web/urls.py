@@ -15,8 +15,7 @@ urlpatterns = [
     path('creerTOEIC/<str:nomToeic>',views.creerTOEIC),
     path('repondTOEIC/<int:id_TEnCours>',views.repondTOEIC, name="repondTOEIC"),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('/register', views.register, name="register" ),
+    path('register', views.register, name="register" ),
     path('espace_prof', views.search),
-    path('filtre_notepp',views.filtre_note_par_partie,name="stats_Prof"),
-    #path('consulter_eleve',views.consulter_espace_eleve,name="cep")
+    path('filtre_notepp',views.filtre_note_par_partie,name="stats_Prof")
 ]

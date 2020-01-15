@@ -9,7 +9,7 @@ class qcm(forms.Form):
                ('b','b'),
                ('c','c'),
                ('d','d'),)
-    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('c','c'))
+    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(),initial=('d','d'))
 class qcmEleve(forms.Form):
     CHOICES = (('a','a'),
                ('b','b'),
@@ -65,3 +65,5 @@ class UserForm(forms.ModelForm):
         fields = ["nom","prenom","classe","groupe"]
     
 
+class EntrerSession(forms.Form):
+    password = forms.CharField(label='Code session : ', required=True,widget=forms.TextInput(attrs={'required': "required"}), max_length=100 )

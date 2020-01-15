@@ -11,9 +11,13 @@
         <button class="btn btn-primary" type="submit" name="toeic" value={{obj.id}} >Lancer TOEIC </button>
     </form>
     {% else %} 
+    <button class="btn btn-primary" type="submit" name="toeic" value={{obj.id}} disabled >En cours </button>
+    
+
+    </form>
     {% for tec in toeicEnCours %}
         {% if tec.id == obj.id %} 
-        
+        <p>Mot de passe : {{ tec.password }} </p>
         <script>
             /**
             
