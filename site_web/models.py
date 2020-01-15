@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import Func
 from django.contrib.auth.models import User
-from django.contrib.auth.base_user import BaseUserManager
+
 
 
 #from site_web.fonctions_TOEIC import NOTE_L
@@ -38,7 +38,7 @@ class TOEIC(models.Model):
 class TOEICEnCours(models.Model):
     id_TOEIC=models.ForeignKey('TOEIC',default=None, on_delete=models.CASCADE) #La réponse à une question correspond à un Toeic 
     date_Debut = models.DateTimeField()
-    password=BaseUserManager().make_random_password()
+    password=models.CharField(max_length=20)
     def __str__(self):
         return "Session : " + self.id_TOEIC.lib_TOEIC + "Mot de passe: " + self.password
 

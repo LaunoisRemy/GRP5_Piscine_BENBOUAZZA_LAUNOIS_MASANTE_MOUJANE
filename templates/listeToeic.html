@@ -13,12 +13,12 @@
     </form>
     {% else %} 
     <button class="btn btn-primary" type="submit" name="toeic" value={{obj.id}} disabled >En cours </button>
-    <p>Mot de passe : {{ obj.password }} </p>
+    
 
     </form>
     {% for tec in toeicEnCours %}
         {% if tec.id == obj.id %} 
-        
+        <p>Mot de passe : {{ tec.password }} </p>
         <script>
             /**
             
