@@ -179,7 +179,8 @@ def liste_TOEIC(request):
     listToeic =  ( Question.objects.all().values('id_TOEIC').distinct() ) 
     toeic = TOEIC.objects.filter(id__in=listToeic)
     toeicEnCours = TOEICEnCours.objects.all()
-    
+    toeicEnCoursT = []
+
 
     maintenant=datetime.now()
 
@@ -188,10 +189,11 @@ def liste_TOEIC(request):
         for tEc in toeicEnCours :
             if(t.id==tEc.id_TOEIC.id and t.id not in list_idToeicEnCours):
                 date_debut = (tEc.date_Debut)
-                finSession = date_debut + timedelta(hours=3)
+                finSession = date_debut + timedelta(hours=2)
                 if(estPlusGrandDate(date_debut,maintenant)  ) :
                     if estPlusGrandDate(maintenant,finSession):
                         list_idToeicEnCours.append(t.id)
+                        toeicEnCoursT.append(tEc)
     if request.method == 'GET': #Pour récupérer la page
         test = NomToeicForm(None)
         context ={
@@ -200,7 +202,9 @@ def liste_TOEIC(request):
             "test" : test
         }
         context['list_idToeicEnCours']=list_idToeicEnCours
-        context['toeicEnCours']=toeicEnCours
+        print(toeicEnCours)
+        print(toeicEnCoursT)
+        context['toeicEnCours']=toeicEnCoursT
         return render(request,"listeToeic.html",context) 
     elif request.method == 'POST':
         if('toeic' in request.POST):
