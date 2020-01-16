@@ -56,7 +56,7 @@ def repondTOEIC(request,id_TEnCours):
         if len(listeBonneReponse) == 0 :
             raise Http404
         if request.method == 'GET': #Pour récupérer la page
-            formset = qcmEleveFormSet(prefix=' Question ', id= 0)  
+            formset = qcmEleveFormSet(prefix=' Question ')  
         elif request.method == 'POST':
 
             formset = qcmFormSet(request.POST or None,prefix=' Question ')
