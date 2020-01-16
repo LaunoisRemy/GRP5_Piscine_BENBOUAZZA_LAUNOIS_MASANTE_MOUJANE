@@ -43,9 +43,9 @@ Fonction qui permet de réaliser la vue lors d'un passage de TOEIC
 """
 def repondTOEIC(request,id_TEnCours):
     ToeicCourant = TOEICEnCours.objects.filter(id=id_TEnCours)[0]
-    print(ToeicCourant)
+    #print(ToeicCourant)
     id_Toeic = ToeicCourant.id_TOEIC.id
-    print(id_Toeic)
+    #print(id_Toeic)
  
 
     if(request.user.is_superuser):
@@ -56,13 +56,19 @@ def repondTOEIC(request,id_TEnCours):
         if len(listeBonneReponse) == 0 :
             raise Http404
         if request.method == 'GET': #Pour récupérer la page
-            formset = qcmEleveFormSet(prefix=' Question ')  
+            formset = qcmEleveFormSet(prefix=' Question ', id= 0)  
         elif request.method == 'POST':
 
-            formset = qcmFormSet(request.POST,prefix=' Question ')
-        
-            if formset.is_valid():#Action de sécurité
-                userReponses = compteurBonneRep(formset)
+            formset = qcmFormSet(request.POST or None,prefix=' Question ')
+            listesReponsesUser = []
+            for form in formset :
+                if(form.is_valid()):
+                    question = form.cleaned_data.get('question')
+                    listesReponsesUser.append(question)
+                else :
+                    listesReponsesUser.append(None)
+
+            userReponses = compteurBonneRep(listesReponsesUser)
 
             #print(userReponses)   
             score = comparaisonReponse(listeBonneReponse,userReponses)
@@ -77,11 +83,11 @@ def repondTOEIC(request,id_TEnCours):
             # AJouté par Ayoub, pour qu'on ait pas des temps de passages différents pour des parties dans un même suejt
             # On prend une date unique
             for ssPartie in range(1,len(score)+1):
-                print(eleve.id)
-                print(ToeicCourant)
-                print(ssPartie)
-                print(score[ssPartie-1])
-                print(datepassage)
+                #print(eleve.id)
+                #print(ToeicCourant)
+                #print(ssPartie)
+                #print(score[ssPartie-1])
+                #print(datepassage)
 
                 #Score a sauvegarder
                 data = {
@@ -93,8 +99,8 @@ def repondTOEIC(request,id_TEnCours):
                 }
                 
                 scorePartie = ScoreParPartieForm(data)
-                print(scorePartie.is_valid())
-                print(scorePartie.errors)
+                #print(scorePartie.is_valid())
+                #print(scorePartie.errors)
 
                 if(scorePartie.is_valid()):
                     scorePartie.save()
@@ -259,7 +265,7 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
             score=Sum('score')).values('id_TOEICEnCours__id_TOEIC','id_SousPartie__type_Partie','score','date_Passage').order_by('date_Passage')
             ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
 
-        print(scoretot)
+        #print(scoretot)
         ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
 
         ##Ici on fait la liste qui contient les notes par partie
@@ -268,7 +274,7 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
                 i["score"]=(NOTE_L(i["score"])) # Recuperation du score d'un dictionnaire et changement du score grace a la fonction de calcul
             else:
                 i["score"]=(NOTE_R(i["score"]))
-        print("Listenoteparpartie",ListeNoteParPartie)
+        #print("Listenoteparpartie",ListeNoteParPartie)
 
         
 
@@ -281,8 +287,8 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
             else:
                 listeR.append(i["score"])
 
-        print('LISTER',listeR)
-        print('LISTEL',listeL)
+        #print('LISTER',listeR)
+        #print('LISTEL',listeL)
         #Oncréer la liste des notes Total
 
         for i in range(len(listeR)):

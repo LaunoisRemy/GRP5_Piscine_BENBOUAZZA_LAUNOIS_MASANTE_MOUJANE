@@ -1,5 +1,6 @@
 from django import forms
 from django.forms import formset_factory
+from django.forms import BaseFormSet
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -15,8 +16,7 @@ class qcmEleve(forms.Form):
                ('b','b'),
                ('c','c'),
                ('d','d'),)
-    question = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect())
-
+    question = forms.ChoiceField(widget=forms.RadioSelect(),required=False,choices=CHOICES)
 qcmFormSet = formset_factory(qcm, extra=200) #Création d'un TOEIC de 200 questions
 qcmEleveFormSet = formset_factory(qcmEleve, extra=200) #Création d'un TOEIC de 200 questions
 

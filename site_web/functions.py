@@ -41,7 +41,7 @@ def compteurBonneRep(formset):
     userReponses=([],[],[],[],[],[],[])
     compteurReponse = 1
     for form in formset:  # On récupère chacune des réponses
-        question = form.cleaned_data.get('question')
+        question = form
         if(compteurReponse <= 6):
             # On met chacune des réponses dans une liste
             userReponses[0].append(question)

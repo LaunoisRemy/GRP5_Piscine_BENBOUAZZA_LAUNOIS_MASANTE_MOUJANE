@@ -71,7 +71,6 @@
         
         <form method='post'id="toeic">
             {% csrf_token %}
-            
             {{ formset.management_form }}
             
             {% for form in formset %}
