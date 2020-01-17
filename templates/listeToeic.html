@@ -3,10 +3,10 @@
 {% block content %}
 <h1>{{ titre }}</h1>
 
-{% for obj in liste %}
+{% for obj in liste %} <!-- Pour chaque toeic dans la liste de tout les toeics-->
 {% if user.is_superuser %}
 <li>{{obj.id}}  : {{obj}}</li>
-    {% if obj.id not in list_idToeicEnCours %}
+    {% if obj.id not in list_idToeicEnCours %} <!-- Si le toeic n'est pas dans la liste des TOEICs qui sont en cours-->
     <form method='post'>
         {% csrf_token %}
         <button class="btn btn-primary" type="submit" name="toeic" value={{obj.id}} >Lancer TOEIC </button>
@@ -16,8 +16,8 @@
     
 
     </form>
-	{% for tec in toeicEnCours %}
-        {% if tec.id_TOEIC.id == obj.id %} 
+	{% for tec in toeicEnCours %} <!-- Pour chaque toeic en cours dans la liste des toeic en cours-->
+        {% if tec.id_TOEIC.id == obj.id %}  <!-- Si l'id toeic en cours est égal a l'id du toeic on affiche le mdp -->
         <p>Mot de passe : {{ tec.password }} </p>
         <script>
             /**

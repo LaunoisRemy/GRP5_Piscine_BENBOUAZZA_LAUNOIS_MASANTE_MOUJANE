@@ -37,7 +37,6 @@ def home(request):
     else :
         return redirect('login')
 
-# TODO deux fonctions qui font presque la même chose, synthétiser 
 """
 Fonction qui permet de réaliser la vue lors d'un passage de TOEIC
 """
@@ -73,7 +72,6 @@ def repondTOEIC(request,id_TEnCours):
             #print(userReponses)   
             score = comparaisonReponse(listeBonneReponse,userReponses)
             # Recupération de l'élève, provisoire
-            # TODO Quand les comptes seront fait récupérer par rapport au compte
             #eleve = Eleve.objects.all()[0]
             utilisateur = request.user
             eleve = Eleve.objects.filter(user=utilisateur)[0]
@@ -185,15 +183,15 @@ def liste_TOEIC(request):
     maintenant=datetime.now()
 
     list_idToeicEnCours = []
-    for t in toeic :
-        for tEc in toeicEnCours :
-            if(t.id==tEc.id_TOEIC.id and t.id not in list_idToeicEnCours):
+    for t in toeic : #Pour chaque toeic
+        for tEc in toeicEnCours : #Pour chaque session
+            if(t.id==tEc.id_TOEIC.id and t.id not in list_idToeicEnCours): 
                 date_debut = (tEc.date_Debut)
                 finSession = date_debut + timedelta(hours=2)
                 if(estPlusGrandDate(date_debut,maintenant)  ) :
                     if estPlusGrandDate(maintenant,finSession):
-                        list_idToeicEnCours.append(t.id)
-                        toeicEnCoursT.append(tEc)
+                        list_idToeicEnCours.append(t.id) # ajoute l'id des toeics réellement en cours (<2)
+                        toeicEnCoursT.append(tEc) # ajoute les toeics réellement en cours (<2)
     if request.method == 'GET': #Pour récupérer la page
         test = NomToeicForm(None)
         context ={
@@ -202,12 +200,10 @@ def liste_TOEIC(request):
             "test" : test
         }
         context['list_idToeicEnCours']=list_idToeicEnCours
-        print(toeicEnCours)
-        print(toeicEnCoursT)
         context['toeicEnCours']=toeicEnCoursT
         return render(request,"listeToeic.html",context) 
     elif request.method == 'POST':
-        if('toeic' in request.POST):
+        if('toeic' in request.POST): # Pour lancer un TOEIC
             toeic = TOEIC.objects.filter(id=request.POST['toeic'])[0]
             data = {
                 "id_TOEIC":toeic.id,
@@ -244,7 +240,6 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
 
     ### Ici scoretot est le tableau, des des scores par parties et par toeic de l'élève qui a pour id id_eleve
     #scoretot = ScoreParPartie.objects.filter(id_Eleve=id_eleve).values('id_TOEIC','id_SousPartie__type_Partie','score')
-    # TODO verifier eleve non vide
     eleve = Eleve.objects.filter(user = request.user)[0]
     nomprenom=str(eleve)
     id_eleve = eleve.id
@@ -267,7 +262,6 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
         scoretot = ScoreParPartie.objects.filter( # Query set
             id_Eleve=id_eleve).values('id_TOEICEnCours__id_TOEIC','id_SousPartie__type_Partie').annotate(
             score=Sum('score')).values('id_TOEICEnCours__id_TOEIC','id_SousPartie__type_Partie','score','date_Passage').order_by('date_Passage')
-            ## TODO Nom et prenom pas besoin car on peut les récupérer directement et ne pas les trainer dans le queryset
 
         #print(scoretot)
         ListeNoteParPartie = list(scoretot) # Transformation de la query set en list
@@ -306,7 +300,6 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
             Tout.append(listeTOT[i])
         #print("listeR: ",listeR,"listeTOT: ",listeTOT,"listeR: ",listeR,"listeDate: ",listeDate,"nom et prenom : ",nom,prenom)
 
-        #TODO Enelever les trucs qui servent plus dans cette vue
         #context = {"reading":listeR,"listening":listeL,"total":listeTOT}
     formulaire = EntrerSession(None)
     utilisateur = request.user
@@ -361,7 +354,7 @@ def espace_eleve(request): # Quand la fonction est appelée elle a pris en param
 
     context["liste"] = liste_ToeicPasse     
 
-    return render(request,"espace_eleve/notes_toeic.html",context) # TODO changer l'affichage des notes pour avoir un truc plus propre
+    return render(request,"espace_eleve/notes_toeic.html",context) 
     
 
 
@@ -370,25 +363,21 @@ def register(request):
         return redirect(home)
     else:
         if request.method == 'GET':
-            form = UserForm()
-            formUser = UserCreationForm()
+            form = UserForm() # Formulaire pour l'éléve sans l'utilisateur
+            formUser = UserCreationForm() #Formulaire pour creer l'utilisateur
             context = { 'form' : form , 'formUser' : formUser}
             return render(request,'registration/register.html', context)
         elif request.method == 'POST':
 
             form = UserForm(request.POST)
             formUser = UserCreationForm(request.POST)
-            print(form.is_valid())
-            print(form.errors)
-            print(form.is_valid())
-            print(formUser.errors)
             if form.is_valid() and formUser.is_valid():
-                user = formUser.save()
+                user = formUser.save() # sauvegarde direct dans la bdd
                 login(request, user)
             
-                post = form.save(commit=False)
-                post.user = user
-                post.save()
+                post = form.save(commit=False) # Eleve.save() mais pas dans la bdd
+                post.user = user #Attribution utilisateur a l'eleve
+                post.save() #Save eleve bdd
 
                 username = user.username
                 password = user.password
